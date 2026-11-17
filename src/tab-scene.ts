@@ -10,8 +10,9 @@
 //
 // Frames smaller than MIN_FRAME_SIDE on either side (tracking pixels, hidden or
 // collapsed iframes) are left out; the top frame never is.
-import { SceneStore } from './scene-store.js';
+
 import type { FrameInfo, NodeId, Relations, Scene, SceneNode, ScenePatch } from './scene.js';
+import { SceneStore } from './scene-store.js';
 
 export const MIN_FRAME_SIDE = 100;
 
@@ -52,7 +53,11 @@ function nestFrames(included: [number, Scene][], nodes: Record<NodeId, SceneNode
   for (const [frameId, scene] of included) {
     const own = `f${frameId}.`;
     const host = hosts.find(
-      (h) => !used.has(h.id) && !h.id.startsWith(own) && h.category === 'structure' && sameDocument(h.frameSrc ?? '', scene.url),
+      (h) =>
+        !used.has(h.id) &&
+        !h.id.startsWith(own) &&
+        h.category === 'structure' &&
+        sameDocument(h.frameSrc ?? '', scene.url),
     );
     if (!host) continue;
     used.add(host.id);
@@ -103,7 +108,9 @@ export class TabScene {
 
   /** Each frame's own Scene, un-composed, for a replica elsewhere to rebuild from. */
   get frames(): [number, Scene][] {
-    return [...this.stores].flatMap(([frameId, store]) => (store.current ? [[frameId, store.current] as [number, Scene]] : []));
+    return [...this.stores].flatMap(([frameId, store]) =>
+      store.current ? [[frameId, store.current] as [number, Scene]] : [],
+    );
   }
 
   get current(): ComposedScene | null {
@@ -116,7 +123,10 @@ export class TabScene {
 
   private compose(): ComposedScene | null {
     const included = this.frames
-      .filter(([frameId, scene]) => frameId === 0 || (scene.viewport.w >= MIN_FRAME_SIDE && scene.viewport.h >= MIN_FRAME_SIDE))
+      .filter(
+        ([frameId, scene]) =>
+          frameId === 0 || (scene.viewport.w >= MIN_FRAME_SIDE && scene.viewport.h >= MIN_FRAME_SIDE),
+      )
       .sort(([a], [b]) => a - b);
     if (included.length === 0) return null;
 
@@ -142,7 +152,10 @@ export class TabScene {
       activeModalId: top.activeModalId && frameNodeId(topId, top.activeModalId),
       nodes,
       frames: Object.fromEntries(
-        included.map(([frameId, scene]) => [frameId, { documentId: scene.documentId, url: scene.url, title: scene.title }]),
+        included.map(([frameId, scene]) => [
+          frameId,
+          { documentId: scene.documentId, url: scene.url, title: scene.title },
+        ]),
       ),
     };
   }

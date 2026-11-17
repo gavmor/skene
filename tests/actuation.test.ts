@@ -1,10 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  deriveActuation,
-  setNativeValue,
-  dispatchSequence,
-  POINTER_SEQUENCE,
-} from '../src/actuation';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { deriveActuation, dispatchSequence, POINTER_SEQUENCE, setNativeValue } from '../src/actuation';
 
 beforeEach(() => {
   document.body.innerHTML = '';

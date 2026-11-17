@@ -11,8 +11,9 @@
 //     re-applied. Convergence is observed, not assumed.
 //   - A node id that no longer resolves is reported `stale`, not silently
 //     dropped. The next observation will carry the replacement.
-import { dispatchSequence, POINTER_SEQUENCE, setNativeValue } from './actuation.js';
+
 import type { PlanAction } from './action-schema.js';
+import { dispatchSequence, POINTER_SEQUENCE, setNativeValue } from './actuation.js';
 import type { SceneNode, StateNode } from './scene.js';
 
 export type ApplyStatus = 'applied' | 'noop' | 'stale' | 'rejected';
@@ -92,7 +93,12 @@ function applySetState(action: PlanAction & { kind: 'setState' }, deps: Reconcil
   const el = deps.resolve(action.nodeId);
   if (!node || !el) return { nodeId: action.nodeId, kind: 'setState', status: 'stale' };
   if (node.category !== 'state') {
-    return { nodeId: action.nodeId, kind: 'setState', status: 'rejected', detail: `not a state node (${node.category})` };
+    return {
+      nodeId: action.nodeId,
+      kind: 'setState',
+      status: 'rejected',
+      detail: `not a state node (${node.category})`,
+    };
   }
   if (readLive(el, node) === action.value) {
     return { nodeId: action.nodeId, kind: 'setState', status: 'noop', detail: 'already converged' };
@@ -107,7 +113,12 @@ function applyClick(action: PlanAction & { kind: 'clickTrigger' }, deps: Reconci
   const el = deps.resolve(action.nodeId);
   if (!node || !el) return { nodeId: action.nodeId, kind: 'clickTrigger', status: 'stale' };
   if (node.category !== 'action') {
-    return { nodeId: action.nodeId, kind: 'clickTrigger', status: 'rejected', detail: `not an action node (${node.category})` };
+    return {
+      nodeId: action.nodeId,
+      kind: 'clickTrigger',
+      status: 'rejected',
+      detail: `not an action node (${node.category})`,
+    };
   }
   if (node.perception.disabled) {
     return { nodeId: action.nodeId, kind: 'clickTrigger', status: 'rejected', detail: 'disabled' };

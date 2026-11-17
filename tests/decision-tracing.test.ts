@@ -2,7 +2,7 @@ import { ROOT_CONTEXT, SpanKind, SpanStatusCode, trace } from '@opentelemetry/ap
 import { BasicTracerProvider, InMemorySpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { describe, expect, it, vi } from 'vitest';
 import { JEV_SYSTEM_ONE, OPENAI_DECISIONS } from '../src/openinference-decision/protocols';
-import { traceDecisions, type DecisionFetch } from '../src/openinference-decision/trace';
+import { type DecisionFetch, traceDecisions } from '../src/openinference-decision/trace';
 import { askSystemOne, isChoiceAnswer } from '../src/system-one';
 import { OBSERVED, REQUEST } from './fixtures/jev-cpp';
 
@@ -13,7 +13,9 @@ function recorder() {
 }
 
 const answering = (body: unknown, status = 200) =>
-  vi.fn<DecisionFetch>(async () => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } }));
+  vi.fn<DecisionFetch>(
+    async () => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } }),
+  );
 
 /**
  * The "Select from fixed options" request from the OpenAI Decisions guide
@@ -112,7 +114,9 @@ describe('traceDecisions over Jev System One', () => {
     const inner = vi.fn<DecisionFetch>(async () => new Response('no such route', { status: 404 }));
     const fetchImpl = traceDecisions({ tracer, protocol: JEV_SYSTEM_ONE, fetchImpl: inner });
 
-    await expect(askSystemOne({ baseURL: 'http://x', request: REQUEST, fetchImpl })).rejects.toThrow(/404.*no such route/);
+    await expect(askSystemOne({ baseURL: 'http://x', request: REQUEST, fetchImpl })).rejects.toThrow(
+      /404.*no such route/,
+    );
 
     const [span] = spans();
     expect(span.status).toEqual({ code: SpanStatusCode.ERROR, message: 'HTTP 404' });

@@ -1,8 +1,8 @@
 // fast-json-patch is CommonJS: a default import works in Node and in bundlers alike.
 import jsonPatch, { type Operation } from 'fast-json-patch';
-import { Perception, Scene, SceneNode, ScenePatch } from './scene.js';
 import { NodeIdMirror } from './node-identity.js';
-import { isVisible, parseNode, ParseContext } from './semantic-parser.js';
+import type { Perception, Scene, SceneNode, ScenePatch } from './scene.js';
+import { isVisible, type ParseContext, parseNode } from './semantic-parser.js';
 
 /** The subset of perception that is global (not derivable from the element alone). */
 type GlobalPerception = Partial<Pick<Perception, 'inViewport' | 'occluded' | 'inertByModal'>>;
@@ -369,7 +369,8 @@ export class SceneProjector {
       // A dialog opens and closes by attribute (`open`, `role`, `aria-modal`) as
       // often as by insertion; either way what sits behind it changes.
       if (rec.type === 'attributes' && rec.target instanceof Element && isDialogEl(rec.target)) modalChanged = true;
-      if ([...Array.from(rec.addedNodes), ...Array.from(rec.removedNodes)].some(isStylesheet)) this.visibilityStale = true;
+      if ([...Array.from(rec.addedNodes), ...Array.from(rec.removedNodes)].some(isStylesheet))
+        this.visibilityStale = true;
       // A record names only the ROOT of an added or removed subtree. Pages that
       // render a whole section at once (a story passage, a framework re-render)
       // put everything that matters below it, so walk it.
@@ -396,7 +397,9 @@ export class SceneProjector {
 
   /** On a modal open/close, bulk-flag every tracked node's inertByModal. */
   reflagModal(): void {
-    const modal = this.deps.root.querySelector('dialog[open], [role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]');
+    const modal = this.deps.root.querySelector(
+      'dialog[open], [role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]',
+    );
     for (const el of Array.from(this.deps.root.querySelectorAll('*'))) {
       if (!this.mirror.peek(el)) continue;
       const inert = modal !== null && modal !== el && !modal.contains(el);

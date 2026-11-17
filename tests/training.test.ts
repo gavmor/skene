@@ -1,11 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { trainingJsonl, trainingRowsOf, type VerifiedRun } from '../src/training';
-import { ACTION_QUESTION, DONE_QUESTION, valueQuestionKey } from '../src/system-one-questions';
-import type { SystemOneEvidence } from '../src/system-one-brain';
 import type { PlanAction } from '../src/action-schema';
+import type { SystemOneEvidence } from '../src/system-one-brain';
+import { ACTION_QUESTION, DONE_QUESTION, valueQuestionKey } from '../src/system-one-questions';
+import { trainingJsonl, trainingRowsOf, type VerifiedRun } from '../src/training';
 import type { TurnOutcome, TurnRecord } from '../src/wire';
 
-const choice = (pick: string) => ({ type: 'choice' as const, choice: pick, probabilities: { [pick]: 0.9 }, confidence: 0.9 });
+const choice = (pick: string) => ({
+  type: 'choice' as const,
+  choice: pick,
+  probabilities: { [pick]: 0.9 },
+  confidence: 0.9,
+});
 const select = valueQuestionKey('f0.s1');
 
 /** A System One exchange: pick `move`, choose `b` for the select, goal met with p = `done`. */
@@ -14,12 +19,19 @@ const evidence = (move: string, done: number): SystemOneEvidence => ({
     model: 'm',
     state: 'goal: g\n\nobservation:\n(page)',
     questions: {
-      [ACTION_QUESTION]: { type: 'choice', instructions: 'next?', criteria: { choose_first: 'Set First', click_submit: 'Submit' } },
+      [ACTION_QUESTION]: {
+        type: 'choice',
+        instructions: 'next?',
+        criteria: { choose_first: 'Set First', click_submit: 'Submit' },
+      },
       [select]: { type: 'choice', instructions: 'value?', criteria: { a: 'Set to a', b: 'Set to b' } },
       [DONE_QUESTION]: { type: 'noul', instructions: 'done?' },
     },
   },
-  response: { model: 'm', answers: { [ACTION_QUESTION]: choice(move), [select]: choice('b'), [DONE_QUESTION]: { type: 'noul', noul: done } } },
+  response: {
+    model: 'm',
+    answers: { [ACTION_QUESTION]: choice(move), [select]: choice('b'), [DONE_QUESTION]: { type: 'noul', noul: done } },
+  },
 });
 
 let at = 0;
@@ -39,7 +51,12 @@ const turn = (tick: number, actions: PlanAction[], over: Partial<TurnRecord> = {
   ...over,
 });
 const moved = (tick: number, yes = true): TurnOutcome => ({ tick, documentId: 'd1', moved: yes });
-const run = (turns: TurnRecord[], outcomes: TurnOutcome[]): VerifiedRun => ({ id: 'run', verified: true, turns, outcomes });
+const run = (turns: TurnRecord[], outcomes: TurnOutcome[]): VerifiedRun => ({
+  id: 'run',
+  verified: true,
+  turns,
+  outcomes,
+});
 
 describe('trainingRowsOf', () => {
   const batch: PlanAction[] = [
@@ -67,14 +84,20 @@ describe('trainingRowsOf', () => {
   });
 
   it('keeps no row from a turn the slow brain decided', () => {
-    expect(trainingRowsOf(run([turn(1, batch, { via: 'system-one->ai-sdk (low confidence)', evidence: undefined })], [moved(1)]))).toEqual(
-      [],
-    );
+    expect(
+      trainingRowsOf(
+        run([turn(1, batch, { via: 'system-one->ai-sdk (low confidence)', evidence: undefined })], [moved(1)]),
+      ),
+    ).toEqual([]);
   });
 
   it('trusts a done only when it is the run’s last word', () => {
     const early = turn(1, [], { done: true });
-    expect(trainingRowsOf(run([early, turn(2, batch)], [moved(2)])).map((r) => r.label)).toEqual(['click_submit', 'b', 'no']);
+    expect(trainingRowsOf(run([early, turn(2, batch)], [moved(2)])).map((r) => r.label)).toEqual([
+      'click_submit',
+      'b',
+      'no',
+    ]);
   });
 
   it('keeps only the target of a filled free-text value: System One chose the field, not the text', () => {
@@ -89,6 +112,11 @@ describe('trainingRowsOf', () => {
 
   it('writes one JSON object per line', () => {
     const rows = trainingRowsOf(run([turn(1, batch)], [moved(1)]));
-    expect(trainingJsonl(rows).split('\n').filter(Boolean).map((l) => JSON.parse(l).id)).toEqual(['run-1', 'run-2', 'run-3']);
+    expect(
+      trainingJsonl(rows)
+        .split('\n')
+        .filter(Boolean)
+        .map((l) => JSON.parse(l).id),
+    ).toEqual(['run-1', 'run-2', 'run-3']);
   });
 });

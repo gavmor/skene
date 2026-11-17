@@ -9,7 +9,7 @@
 // alike (Jev System One, OpenAI Decisions, and the TypeSafe API upstream was
 // written for). So these readers are shared, and the protocol only decides
 // which system and provider the span is attributed to.
-import type { Attributes } from '@opentelemetry/api';
+
 import {
   getDecisionAttributes,
   getInputAttributes,
@@ -18,6 +18,7 @@ import {
   safelyJSONParse,
 } from '@arizeai/openinference-core';
 import { MimeType } from '@arizeai/openinference-semantic-conventions';
+import type { Attributes } from '@opentelemetry/api';
 
 /** A body as sent or received, and its parsed JSON object when it is one. */
 function readBody(body: string): { value: string; mimeType: MimeType; json?: Record<string, unknown> } {

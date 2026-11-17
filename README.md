@@ -41,9 +41,11 @@ checks the tag against `package.json`, runs the gates, builds, and attaches
 | Command | |
 |---|---|
 | `pnpm test` | Vitest (jsdom) |
-| `pnpm typecheck` | `tsc --noEmit` |
+| `pnpm typecheck` | `tsc` over everything, plus `src` as Node resolves it (NodeNext) |
+| `pnpm lint` | Biome: lint + format check (`pnpm lint:fix` to apply) |
 | `pnpm cpd` | jscpd copy-paste detection |
 | `pnpm build` | emit `dist/` |
 | `pnpm probe` | live probe against a running System One server (not a gate) |
 
-Lefthook runs typecheck, tests and cpd before every commit.
+Lefthook runs typecheck, lint, tests and cpd before every commit; CI runs the
+same, plus the build and `pnpm check:node`.

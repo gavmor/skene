@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { SceneProjector, ProjectorDeps } from '../src/scene-projector';
-import { ScenePatch } from '../src/scene';
+import { beforeEach, describe, expect, it } from 'vitest';
+import type { ScenePatch } from '../src/scene';
+import { type ProjectorDeps, SceneProjector } from '../src/scene-projector';
 
 function makeProjector(): { proj: SceneProjector; patches: ScenePatch[] } {
   const patches: ScenePatch[] = [];
@@ -14,7 +14,7 @@ function makeProjector(): { proj: SceneProjector; patches: ScenePatch[] } {
 
 function onlyPatch(patches: ScenePatch[]): Extract<ScenePatch, { kind: 'patch' }> {
   const patch = patches[0];
-  if (!patch || patch.kind !== 'patch') throw new Error('expected a patch payload');
+  if (patch?.kind !== 'patch') throw new Error('expected a patch payload');
   return patch;
 }
 
@@ -117,7 +117,8 @@ describe('SceneProjector.flush', () => {
   });
 
   it('drops everything inside a subtree removed in one go', async () => {
-    document.body.innerHTML = '<div id="passage"><p>Old passage.</p><a href="#a">Old choice</a></div><button>Menu</button>';
+    document.body.innerHTML =
+      '<div id="passage"><p>Old passage.</p><a href="#a">Old choice</a></div><button>Menu</button>';
     const { proj, patches } = makeProjector();
     proj.scan();
     proj.start();
@@ -137,7 +138,9 @@ describe('SceneProjector.flush', () => {
     proj.scan();
     proj.start();
     const items = Array.from(document.querySelectorAll('li'));
-    const [ada, grace, katherine] = items.map((li) => Object.values(proj.current.nodes).find((n) => proj.elementFor(n.id) === li)!.id);
+    const [ada, grace, katherine] = items.map(
+      (li) => Object.values(proj.current.nodes).find((n) => proj.elementFor(n.id) === li)!.id,
+    );
     const newcomer = document.createElement('li');
     newcomer.textContent = 'Margaret';
     items[1].before(newcomer);
@@ -145,7 +148,9 @@ describe('SceneProjector.flush', () => {
     proj.flush();
     proj.stop();
 
-    const orderOps = onlyPatch(patches).ops.filter((o) => o.path.endsWith('/order')).map((o) => o.path);
+    const orderOps = onlyPatch(patches)
+      .ops.filter((o) => o.path.endsWith('/order'))
+      .map((o) => o.path);
     expect(orderOps).toEqual(expect.arrayContaining([`/nodes/${grace}/order`, `/nodes/${katherine}/order`]));
     expect(orderOps).not.toContain(`/nodes/${ada}/order`);
     const placed = Object.values(proj.current.nodes).find((n) => proj.elementFor(n.id) === newcomer)!;

@@ -50,4 +50,3 @@ export const nothingAfforded = (via: string): Decision => ({
   remaining: '',
   actions: [],
 });
-

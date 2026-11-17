@@ -14,10 +14,11 @@
 // which produces no patches, which never re-arms the timer; the Scene is then
 // settled, and only a page change, a new goal, or "Decide now" decides on it
 // again. The tick budget exists only to bound a page that churns on its own.
-import { TabScene, splitNodeId, type ComposedScene } from './tab-scene.js';
+
 import { buildActionSchema, type PlanAction } from './action-schema.js';
 import type { Decision } from './decision.js';
 import type { NodeId, Scene, ScenePatch } from './scene.js';
+import { type ComposedScene, splitNodeId, TabScene } from './tab-scene.js';
 import type { DownMessage, PendingDecision, TurnOutcome, TurnRecord } from './wire.js';
 
 export interface AgentLoopDeps {
@@ -89,7 +90,8 @@ export class AgentLoop {
   /** Fold one frame's up-edge message in and re-arm the settle timer. */
   ingest(message: ScenePatch, frameId = 0): void {
     if (this.stopped) return;
-    const sameDocument = this.tab.documentOf(frameId) === (message.kind === 'snapshot' ? message.scene.documentId : message.documentId);
+    const sameDocument =
+      this.tab.documentOf(frameId) === (message.kind === 'snapshot' ? message.scene.documentId : message.documentId);
     if (message.kind === 'snapshot') {
       // A frame on a new document is a new world: the budget starts over.
       if (!sameDocument) {
@@ -276,7 +278,10 @@ export class AgentLoop {
     this.idle(
       scene,
       tick,
-      error ?? (decision.done ? 'goal met' : decision.remaining || (decision.decided ? 'no action chosen' : 'nothing afforded')),
+      error ??
+        (decision.done
+          ? 'goal met'
+          : decision.remaining || (decision.decided ? 'no action chosen' : 'nothing afforded')),
     );
   }
 

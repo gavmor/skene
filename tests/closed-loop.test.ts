@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { SceneProjector } from '../src/scene-projector';
 import { applyPlan } from '../src/reconciler';
-import { createSystemOneBrain } from '../src/system-one-brain';
-import { ACTION_QUESTION, DONE_QUESTION, buildActionQuestions } from '../src/system-one-questions';
 import type { ScenePatch, StateNode } from '../src/scene';
+import { SceneProjector } from '../src/scene-projector';
+import { createSystemOneBrain } from '../src/system-one-brain';
+import { ACTION_QUESTION, buildActionQuestions, DONE_QUESTION } from '../src/system-one-questions';
 
 /**
  * The one closed-loop invariant the whole design rests on: after the down-edge
@@ -77,7 +77,9 @@ describe('a playbook lands in one applyPlan', () => {
     document.body.innerHTML = `
       <form aria-label="Preferences">
         ${['First', 'Second', 'Third']
-          .map((name) => `<label>${name}<select><option value="x">x</option><option value="y">y</option></select></label>`)
+          .map(
+            (name) => `<label>${name}<select><option value="x">x</option><option value="y">y</option></select></label>`,
+          )
           .join('')}
         <button type="submit">Submit</button>
       </form>`;
@@ -91,7 +93,12 @@ describe('a playbook lands in one applyPlan', () => {
     const built = buildActionQuestions(projector.current)!;
     const [playbook] = built.playbooks;
     expect(playbook.members).toHaveLength(3);
-    const pick = (label: string) => ({ type: 'choice', choice: label, probabilities: { [label]: 0.9 }, confidence: 0.9 });
+    const pick = (label: string) => ({
+      type: 'choice',
+      choice: label,
+      probabilities: { [label]: 0.9 },
+      confidence: 0.9,
+    });
     const answers = {
       [ACTION_QUESTION]: pick(Object.keys(built.actions).find((l) => built.actions[l].nodeId === playbook.commit)!),
       [DONE_QUESTION]: { type: 'noul', noul: 0 },

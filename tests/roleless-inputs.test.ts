@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { resolveRole } from '../src/semantic-parser';
-import { SceneProjector } from '../src/scene-projector';
 import type { StateNode } from '../src/scene';
+import { SceneProjector } from '../src/scene-projector';
+import { resolveRole } from '../src/semantic-parser';
 
 describe('roleless inputs', () => {
   it('names the inputs HTML-AAM leaves without a role', () => {

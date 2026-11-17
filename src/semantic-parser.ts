@@ -1,6 +1,8 @@
-import { computeAccessibleName, getRole, isInaccessible } from 'dom-accessibility-api';
 import { roles as ariaRoles } from 'aria-query';
-import {
+import { computeAccessibleName, getRole, isInaccessible } from 'dom-accessibility-api';
+import { deriveActuation } from './actuation.js';
+import { type NodeIdMirror, semanticSignature, structuralPath } from './node-identity.js';
+import type {
   ActionNode,
   ContentNode,
   NodeCategory,
@@ -11,12 +13,6 @@ import {
   StateNode,
   StructureNode,
 } from './scene.js';
-import {
-  NodeIdMirror,
-  semanticSignature,
-  structuralPath,
-} from './node-identity.js';
-import { deriveActuation } from './actuation.js';
 
 export interface ParseContext {
   mirror: NodeIdMirror;
@@ -33,26 +29,79 @@ interface NodeBase {
 }
 
 const STATE_ROLES = new Set([
-  'textbox', 'searchbox', 'combobox', 'listbox', 'slider', 'spinbutton',
-  'checkbox', 'radio', 'switch', 'scrollbar',
+  'textbox',
+  'searchbox',
+  'combobox',
+  'listbox',
+  'slider',
+  'spinbutton',
+  'checkbox',
+  'radio',
+  'switch',
+  'scrollbar',
 ]);
 const ACTION_ROLES = new Set([
-  'button', 'link', 'menuitem', 'menuitemcheckbox', 'menuitemradio',
-  'tab', 'treeitem', 'option',
+  'button',
+  'link',
+  'menuitem',
+  'menuitemcheckbox',
+  'menuitemradio',
+  'tab',
+  'treeitem',
+  'option',
 ]);
 const STRUCTURE_ROLES = new Set([
-  'form', 'search', 'dialog', 'alertdialog', 'navigation', 'main', 'region',
-  'complementary', 'banner', 'contentinfo', 'list', 'group', 'tablist',
-  'table', 'grid', 'menu', 'menubar', 'tree', 'toolbar', 'radiogroup', 'iframe',
+  'form',
+  'search',
+  'dialog',
+  'alertdialog',
+  'navigation',
+  'main',
+  'region',
+  'complementary',
+  'banner',
+  'contentinfo',
+  'list',
+  'group',
+  'tablist',
+  'table',
+  'grid',
+  'menu',
+  'menubar',
+  'tree',
+  'toolbar',
+  'radiogroup',
+  'iframe',
 ]);
 const CONTENT_ROLES = new Set([
-  'heading', 'img', 'status', 'alert', 'log', 'note', 'paragraph',
-  'definition', 'term', 'figure',
+  'heading',
+  'img',
+  'status',
+  'alert',
+  'log',
+  'note',
+  'paragraph',
+  'definition',
+  'term',
+  'figure',
 ]);
 const NON_SALIENT_ROLES = new Set(['generic', 'presentation', 'none']);
 const SCOPING_ROLES = new Set([
-  'form', 'dialog', 'alertdialog', 'list', 'group', 'navigation', 'main',
-  'region', 'tablist', 'table', 'grid', 'menu', 'tree', 'toolbar', 'radiogroup',
+  'form',
+  'dialog',
+  'alertdialog',
+  'list',
+  'group',
+  'navigation',
+  'main',
+  'region',
+  'tablist',
+  'table',
+  'grid',
+  'menu',
+  'tree',
+  'toolbar',
+  'radiogroup',
 ]);
 
 function roleSupers(role: string): string[] {
@@ -300,9 +349,17 @@ function buildContentNode(el: Element, base: NodeBase, role: string): ContentNod
 }
 
 const LANDMARKS: Record<string, StructureNode['landmark']> = {
-  form: 'form', dialog: 'dialog', alertdialog: 'dialog', navigation: 'navigation',
-  main: 'main', region: 'region', list: 'list', group: 'group', tablist: 'tablist',
-  banner: 'banner', contentinfo: 'contentinfo',
+  form: 'form',
+  dialog: 'dialog',
+  alertdialog: 'dialog',
+  navigation: 'navigation',
+  main: 'main',
+  region: 'region',
+  list: 'list',
+  group: 'group',
+  tablist: 'tablist',
+  banner: 'banner',
+  contentinfo: 'contentinfo',
 };
 
 function isModal(el: Element): boolean {
@@ -336,9 +393,7 @@ function buildStructureNode(el: Element, base: NodeBase, role: string): Structur
  * exception is named here rather than left as a silent blind spot. All of them
  * are text-shaped state: a settable string value.
  */
-const ROLELESS_TEXT_INPUTS = new Set([
-  'password', 'date', 'datetime-local', 'month', 'week', 'time', 'color',
-]);
+const ROLELESS_TEXT_INPUTS = new Set(['password', 'date', 'datetime-local', 'month', 'week', 'time', 'color']);
 
 /**
  * Implicit roles the HTML-AAM assigns that `dom-accessibility-api`'s tag table
@@ -362,7 +417,17 @@ export function resolveRole(el: Element): string | null {
 }
 
 /** Never a source of readable text: code, markup, and a label (its text is its control's name). */
-const TEXT_SILENT_TAGS = new Set(['script', 'style', 'noscript', 'template', 'svg', 'math', 'label', 'select', 'textarea']);
+const TEXT_SILENT_TAGS = new Set([
+  'script',
+  'style',
+  'noscript',
+  'template',
+  'svg',
+  'math',
+  'label',
+  'select',
+  'textarea',
+]);
 
 /**
  * Ancestors whose own line already says everything under them: prose and
@@ -453,9 +518,13 @@ export function parseNode(el: Element, ctx: ParseContext): SceneNode | null {
     order: 0,
   });
   switch (category) {
-    case 'state': return buildStateNode(el, base, role);
-    case 'action': return buildActionNode(el, base, role, ctx);
-    case 'content': return buildContentNode(el, base, role);
-    case 'structure': return buildStructureNode(el, base, role);
+    case 'state':
+      return buildStateNode(el, base, role);
+    case 'action':
+      return buildActionNode(el, base, role, ctx);
+    case 'content':
+      return buildContentNode(el, base, role);
+    case 'structure':
+      return buildStructureNode(el, base, role);
   }
 }

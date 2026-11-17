@@ -5,10 +5,10 @@
 // The brain a test supplies is a function of the Scene alone, as a real one is;
 // whatever it "remembers" must be read back off the page.
 import { AgentLoop, type AgentLoopDeps } from '../../src/agent-loop';
-import { handlePlan } from '../../src/plan-handler';
-import { SceneProjector } from '../../src/scene-projector';
 import type { Decision } from '../../src/decision';
+import { handlePlan } from '../../src/plan-handler';
 import type { Scene, SceneNode } from '../../src/scene';
+import { SceneProjector } from '../../src/scene-projector';
 import type { TurnOutcome, TurnRecord } from '../../src/wire';
 
 export type Mind = (scene: Scene) => Decision | Promise<Decision>;
@@ -75,7 +75,9 @@ export function mount(html: string, mind: Mind, options: Partial<AgentLoopDeps> 
         if (until()) return;
         await sleep(5);
       }
-      throw new Error(`timed out waiting for ${what}; turns: ${JSON.stringify(turns.map((t) => [t.tick, t.actions, t.done]))}`);
+      throw new Error(
+        `timed out waiting for ${what}; turns: ${JSON.stringify(turns.map((t) => [t.tick, t.actions, t.done]))}`,
+      );
     },
     quiet: async (ms = 200) => {
       for (let seen = -1; seen !== turns.length; ) {
