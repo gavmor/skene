@@ -46,7 +46,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "probe": "vitest run --config e2e/vitest.probe.config.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.build.json --noEmit",
     "cpd": "jscpd --min-lines 10 --min-tokens 50 --pattern 'src/**/*.ts'",
     "check:node": "node scripts/check-node.mjs"
   },
