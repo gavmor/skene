@@ -18,7 +18,7 @@
 // constrains decoding. The constraint is enforced by the sampler, not by a
 // post-hoc validator and not by the model's goodwill.
 import { z } from 'zod';
-import type { ActionNode, Scene, SceneNode, StateNode } from './scene';
+import type { ActionNode, Scene, SceneNode, StateNode } from './scene.js';
 
 /** What the brain emits; mirrors the content script's two capabilities 1:1. */
 export type PlanAction =

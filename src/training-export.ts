@@ -1,2 +1,2 @@
 // skene/training: verified runs -> Jeff training rows (see training.ts).
-export * from './training';
+export * from './training.js';

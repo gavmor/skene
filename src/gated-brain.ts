@@ -2,8 +2,8 @@
 // must. No transport or model in here: any fast brain that reports a
 // calibrated `confidence` (System One today) can sit in front of any slow
 // `Brain`, and a gate is itself a `Brain`, so gates chain.
-import type { Brain, BrainInput, Decision } from './decision';
-import type { NodeId } from './scene';
+import type { Brain, BrainInput, Decision } from './decision.js';
+import type { NodeId } from './scene.js';
 
 /** A decision that says how sure it is, and may leave a free-text value open. */
 export interface ScoredDecision extends Decision {

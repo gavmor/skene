@@ -2,10 +2,10 @@
 //
 // Lives apart from the WXT entrypoint so the integration tests drive the very
 // same code the extension runs, not a copy of it.
-import type { SceneProjector } from './scene-projector';
-import type { ScenePatch } from './scene';
-import { applyPlan, didMove, summarize } from './reconciler';
-import type { DownMessage } from './wire';
+import type { SceneProjector } from './scene-projector.js';
+import type { ScenePatch } from './scene.js';
+import { applyPlan, didMove, summarize } from './reconciler.js';
+import type { DownMessage } from './wire.js';
 
 /** `log` hears one line per message handled; silent unless the host wires it. */
 export function handlePlan(

@@ -20,10 +20,10 @@
 // The row shape is Jeff's `TrainingRow` (jeff apps/hub/app/lib/
 // adapter-requests.server.ts): `state` holds the classifier's input exactly as
 // it was sent, so the adapter trains on what it will see at inference.
-import { ACTION_QUESTION, DONE_QUESTION, valueQuestionKey } from './system-one-questions';
-import type { SystemOneEvidence } from './system-one-brain';
-import { isChoiceAnswer, type SystemOneAnswer, type SystemOneQuestion } from './system-one';
-import type { TurnOutcome, TurnRecord } from './wire';
+import { ACTION_QUESTION, DONE_QUESTION, valueQuestionKey } from './system-one-questions.js';
+import type { SystemOneEvidence } from './system-one-brain.js';
+import { isChoiceAnswer, type SystemOneAnswer, type SystemOneQuestion } from './system-one.js';
+import type { TurnOutcome, TurnRecord } from './wire.js';
 
 export interface TrainingRow {
   id: string;

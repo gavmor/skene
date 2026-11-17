@@ -10,8 +10,8 @@
 //
 // Frames smaller than MIN_FRAME_SIDE on either side (tracking pixels, hidden or
 // collapsed iframes) are left out; the top frame never is.
-import { SceneStore } from './scene-store';
-import type { FrameInfo, NodeId, Relations, Scene, SceneNode, ScenePatch } from './scene';
+import { SceneStore } from './scene-store.js';
+import type { FrameInfo, NodeId, Relations, Scene, SceneNode, ScenePatch } from './scene.js';
 
 export const MIN_FRAME_SIDE = 100;
 

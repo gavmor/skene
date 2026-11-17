@@ -19,3 +19,4 @@ jobs:
       - run: pnpm test
       - run: pnpm cpd
       - run: pnpm build
+      - run: pnpm check:node

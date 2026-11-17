@@ -19,7 +19,7 @@ import { context, diag, SpanKind, SpanStatusCode, type Context, type Span, type 
 import { getDecisionAttributes, withSafety } from '@arizeai/openinference-core';
 import { OpenInferenceSpanKind, SemanticConventions } from '@arizeai/openinference-semantic-conventions';
 import { ATTR_HTTP_RESPONSE_STATUS_CODE } from '@opentelemetry/semantic-conventions';
-import { getRequestAttributes, getResponseAttributes } from './attributes';
+import { getRequestAttributes, getResponseAttributes } from './attributes.js';
 
 /** The fetch a decision client is given, and the one it gets back. */
 export type DecisionFetch = (input: string, init: RequestInit) => Promise<Response>;

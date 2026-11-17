@@ -17,11 +17,11 @@
 // still owns actuation, which is what keeps the loop safe to retry.
 import { generateObject, type LanguageModel, type Telemetry } from 'ai';
 import { z } from 'zod';
-import { buildActionSchema, isStateNode, type Plan } from './action-schema';
-import { nothingAfforded, type Brain, type Decision } from './decision';
-import { describeScene } from './describe-scene';
-import type { ValueFiller } from './gated-brain';
-import type { Scene } from './scene';
+import { buildActionSchema, isStateNode, type Plan } from './action-schema.js';
+import { nothingAfforded, type Brain, type Decision } from './decision.js';
+import { describeScene } from './describe-scene.js';
+import type { ValueFiller } from './gated-brain.js';
+import type { Scene } from './scene.js';
 
 export const AI_SDK_BRAIN = 'ai-sdk';
 

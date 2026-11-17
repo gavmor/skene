@@ -1,4 +1,4 @@
-import { Actuation } from './scene';
+import { Actuation } from './scene.js';
 
 /**
  * The event order complex/custom widgets listen for to actually open or activate.

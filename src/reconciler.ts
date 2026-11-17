@@ -11,9 +11,9 @@
 //     re-applied. Convergence is observed, not assumed.
 //   - A node id that no longer resolves is reported `stale`, not silently
 //     dropped. The next observation will carry the replacement.
-import { dispatchSequence, POINTER_SEQUENCE, setNativeValue } from './actuation';
-import type { PlanAction } from './action-schema';
-import type { SceneNode, StateNode } from './scene';
+import { dispatchSequence, POINTER_SEQUENCE, setNativeValue } from './actuation.js';
+import type { PlanAction } from './action-schema.js';
+import type { SceneNode, StateNode } from './scene.js';
 
 export type ApplyStatus = 'applied' | 'noop' | 'stale' | 'rejected';
 

@@ -1,8 +1,8 @@
 // Scene -> the text a model reads. Shared by every brain that sends the page
 // as prose (the AI SDK brain's prompt, System One's `state`), so it carries no
 // model dependency of its own.
-import { buildActionSchema, isScriptHref } from './action-schema';
-import type { ContentNode, NodeId, Scene, SceneNode } from './scene';
+import { buildActionSchema, isScriptHref } from './action-schema.js';
+import type { ContentNode, NodeId, Scene, SceneNode } from './scene.js';
 
 function flags(node: SceneNode): string {
   const set = [

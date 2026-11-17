@@ -1,4 +1,4 @@
-import { NodeId } from './scene';
+import { NodeId } from './scene.js';
 
 /**
  * Two-tier stable identity.
