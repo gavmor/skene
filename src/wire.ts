@@ -52,4 +52,17 @@ export interface TurnRecord {
   confidence?: number;
   ms: number;
   error?: string;
+  /** the deciding brain's `Decision.evidence`, carried through */
+  evidence?: unknown;
+}
+
+/**
+ * Whether a turn's plan changed the page. Known only after the turn is
+ * recorded: the first JSON-Patch op or new document says yes; the content
+ * script re-offering the same Scene, or the no-effect timeout, says no.
+ */
+export interface TurnOutcome {
+  tick: number;
+  documentId: string;
+  moved: boolean;
 }

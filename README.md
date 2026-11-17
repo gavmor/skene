@@ -12,6 +12,7 @@ nothing in here knows about any particular site or application.
 | `@gavmor/skene/dom` | `SceneProjector`, `applyPlan`, `handlePlan`: perceive and act on a live document (content script, jsdom, a Playwright page) | a DOM |
 | `@gavmor/skene/brains/system-one` | the `/v1/systemone` classifier brain, its questions and playbooks | `fetch` |
 | `@gavmor/skene/brains/ai-sdk` | the AI SDK brain and free-text value filler | `ai` |
+| `@gavmor/skene/training` | verified runs → Jeff `TrainingRow`s for a System One adapter | — |
 | `@gavmor/skene/tracing` | OpenInference DECISION spans for classifier calls | `@opentelemetry/*`, `@arizeai/openinference-*` |
 
 The optional dependencies are peer dependencies: install only what the subpaths

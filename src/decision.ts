@@ -21,6 +21,12 @@ export interface Decision {
   via?: string;
   /** calibrated confidence, when the deciding brain reports one */
   confidence?: number;
+  /**
+   * What the deciding brain exchanged with its model, verbatim, when it can be
+   * replayed (System One's request and response). Opaque to the loop; it rides
+   * into the turn log so a verified run can become training data (training.ts).
+   */
+  evidence?: unknown;
 }
 
 /**

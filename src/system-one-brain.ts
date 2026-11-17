@@ -31,6 +31,7 @@ import {
   isNoulAnswer,
   MAX_CHOICE_CRITERIA,
   type FetchLike,
+  type SystemOneRequest,
   type SystemOneResponse,
 } from './system-one';
 
@@ -49,6 +50,12 @@ export const SYSTEM_ONE_BRAIN = 'system-one';
  * or the slow brain supplies it.
  */
 export type SystemOneDecision = ScoredDecision;
+
+/** A System One decision's `evidence`: the exchange, as sent and as answered. */
+export interface SystemOneEvidence {
+  request: SystemOneRequest;
+  response: SystemOneResponse;
+}
 
 export type SystemOneBrain = (input: BrainInput) => Promise<SystemOneDecision>;
 
@@ -116,20 +123,13 @@ export function createSystemOneBrain(options: SystemOneBrainOptions): SystemOneB
       throw new Error(`scene affords ${offered} actions, over the ${MAX_CHOICE_CRITERIA}-criteria choice limit`);
     }
 
-    const response = await askSystemOne({
-      baseURL: options.baseURL,
-      fetchImpl: options.fetchImpl,
-      signal,
-      request: {
-        model: options.model,
-        state: describeState(scene, goal),
-        questions: built.questions,
-      },
-    });
+    const request = { model: options.model, state: describeState(scene, goal), questions: built.questions };
+    const response = await askSystemOne({ baseURL: options.baseURL, fetchImpl: options.fetchImpl, signal, request });
+    const evidence: SystemOneEvidence = { request, response };
 
     const done = response.answers[DONE_QUESTION];
     if (isNoulAnswer(done) && done.noul >= doneThreshold) {
-      return { decided: true, done: true, via: SYSTEM_ONE_BRAIN, confidence: done.noul, satisfied: '', remaining: '', actions: [] };
+      return { decided: true, done: true, via: SYSTEM_ONE_BRAIN, confidence: done.noul, satisfied: '', remaining: '', actions: [], evidence };
     }
 
     const chosen = response.answers[ACTION_QUESTION];
@@ -140,7 +140,7 @@ export function createSystemOneBrain(options: SystemOneBrainOptions): SystemOneB
     const target = built.actions[chosen.choice];
     if (!target) throw new Error(`system-one chose ${JSON.stringify(chosen.choice)}, which was not offered`);
 
-    const base = { decided: true as const, via: SYSTEM_ONE_BRAIN, satisfied: '', remaining: '' };
+    const base = { decided: true as const, via: SYSTEM_ONE_BRAIN, satisfied: '', remaining: '', evidence };
 
     const playbook = built.playbooks.find(
       (p) => p.commit === target.nodeId || p.members.some((m) => m.nodeId === target.nodeId),
