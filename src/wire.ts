@@ -8,8 +8,9 @@
 // at-least-once and memoryless; it closes through the WORLD, not through the
 // channel. A re-applied plan converges because `setState` is convergent and the
 // next observation reports the truth either way.
-import type { ScenePatch } from './scene.js';
+
 import type { PlanAction } from './action-schema.js';
+import type { ScenePatch } from './scene.js';
 
 /** content -> background */
 export type UpMessage = ScenePatch;

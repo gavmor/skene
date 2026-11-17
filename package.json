@@ -48,7 +48,9 @@
     "probe": "vitest run --config e2e/vitest.probe.config.ts",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.build.json --noEmit",
     "cpd": "jscpd --min-lines 10 --min-tokens 50 --pattern 'src/**/*.ts'",
-    "check:node": "node scripts/check-node.mjs"
+    "check:node": "node scripts/check-node.mjs",
+    "lint": "biome check --error-on-warnings .",
+    "lint:fix": "biome check --write ."
   },
   "dependencies": {
     "aria-query": "^5.3.2",
@@ -83,6 +85,7 @@
   "devDependencies": {
     "@arizeai/openinference-core": "^2.8.0",
     "@arizeai/openinference-semantic-conventions": "^2.14.0",
+    "@biomejs/biome": "2.6.8",
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/sdk-trace-base": "^2.12.0",
     "@opentelemetry/semantic-conventions": "^1.43.0",

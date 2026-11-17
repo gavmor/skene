@@ -1,4 +1,4 @@
-import { Actuation } from './scene.js';
+import type { Actuation } from './scene.js';
 
 /**
  * The event order complex/custom widgets listen for to actually open or activate.
@@ -48,14 +48,8 @@ export function deriveActuation(el: Element): Actuation {
  * native prototype setter bypasses that tracker so a dispatched 'input' is
  * actually observed by the framework. The setter is per element class.
  */
-export function setNativeValue(
-  el: HTMLInputElement | HTMLTextAreaElement,
-  value: string,
-): void {
-  const proto =
-    el instanceof HTMLTextAreaElement
-      ? HTMLTextAreaElement.prototype
-      : HTMLInputElement.prototype;
+export function setNativeValue(el: HTMLInputElement | HTMLTextAreaElement, value: string): void {
+  const proto = el instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
   const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
   if (setter) setter.call(el, value);
   else el.value = value;

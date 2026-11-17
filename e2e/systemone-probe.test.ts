@@ -17,18 +17,19 @@
 // little: a model that always says "fill the email field" would pass a
 // single-state probe. It has to FLIP to the trigger once the fields are filled
 // and the page enables the button. That flip is the claim.
-import { beforeAll, describe, expect, it } from 'vitest';
-import { JSDOM } from 'jsdom';
+
 import { readFile } from 'node:fs/promises';
 import { request as httpRequest } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { JSDOM } from 'jsdom';
+import { beforeAll, describe, expect, it } from 'vitest';
+import type { Scene } from '../src/scene';
 import { SceneProjector } from '../src/scene-projector';
+import { askSystemOne, type FetchLike, isChoiceAnswer, isNoulAnswer } from '../src/system-one';
 import { createSystemOneBrain } from '../src/system-one-brain';
 import { ACTION_QUESTION, buildActionQuestions, describeState } from '../src/system-one-questions';
-import { askSystemOne, isChoiceAnswer, isNoulAnswer, type FetchLike } from '../src/system-one';
-import type { Scene } from '../src/scene';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 

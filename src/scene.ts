@@ -90,17 +90,8 @@ export interface Relations {
  * Carried in the model so each node is self-describing.
  */
 export interface Actuation {
-  setStrategy?:
-    | 'native-value'
-    | 'react-setter'
-    | 'select-option'
-    | 'toggle-checked'
-    | 'scroll';
-  fireStrategy?:
-    | 'native-click'
-    | 'pointer-sequence'
-    | 'submit-event'
-    | 'enter-key';
+  setStrategy?: 'native-value' | 'react-setter' | 'select-option' | 'toggle-checked' | 'scroll';
+  fireStrategy?: 'native-click' | 'pointer-sequence' | 'submit-event' | 'enter-key';
   /** explicit event sequence to dispatch, in order */
   events?: string[];
 }

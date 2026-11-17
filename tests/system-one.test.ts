@@ -3,7 +3,9 @@ import { askSystemOne, isChoiceAnswer, isNoulAnswer } from '../src/system-one';
 import { OBSERVED, REQUEST } from './fixtures/jev-cpp';
 
 const ok = (body: unknown) =>
-  vi.fn(async () => new Response(JSON.stringify(body), { status: 200, headers: { 'content-type': 'application/json' } }));
+  vi.fn(
+    async () => new Response(JSON.stringify(body), { status: 200, headers: { 'content-type': 'application/json' } }),
+  );
 
 describe('askSystemOne', () => {
   it('POSTs the request body to <baseURL>/v1/systemone', async () => {
@@ -55,8 +57,8 @@ describe('askSystemOne', () => {
   });
 
   it('throws when the body carries no answers', async () => {
-    await expect(askSystemOne({ baseURL: 'http://x', request: REQUEST, fetchImpl: ok({ model: 'x' }) })).rejects.toThrow(
-      /no answers/,
-    );
+    await expect(
+      askSystemOne({ baseURL: 'http://x', request: REQUEST, fetchImpl: ok({ model: 'x' }) }),
+    ).rejects.toThrow(/no answers/);
   });
 });

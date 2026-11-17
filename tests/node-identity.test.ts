@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { NodeIdMirror, structuralPath, semanticSignature } from '../src/node-identity';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { NodeIdMirror, semanticSignature, structuralPath } from '../src/node-identity';
 
 describe('NodeIdMirror', () => {
   let mirror: NodeIdMirror;

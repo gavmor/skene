@@ -28,7 +28,11 @@ export const REQUEST: SystemOneRequest = {
     route: {
       type: 'choice',
       instructions: 'Which team should handle this?',
-      criteria: { payments: 'Payout failures and billing', account: 'Login and account access', other: 'Anything else' },
+      criteria: {
+        payments: 'Payout failures and billing',
+        account: 'Login and account access',
+        other: 'Anything else',
+      },
     },
     urgent: { type: 'noul', instructions: 'Does this need urgent attention?' },
   },

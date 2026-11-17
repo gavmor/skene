@@ -15,9 +15,10 @@
 // The tracer is passed in, never the global one. So is the parent context: a
 // worker has no context manager, so `context.active()` is the root context
 // there, and a decision is a trace of its own unless the caller says otherwise.
-import { context, diag, SpanKind, SpanStatusCode, type Context, type Span, type Tracer } from '@opentelemetry/api';
+
 import { getDecisionAttributes, withSafety } from '@arizeai/openinference-core';
 import { OpenInferenceSpanKind, SemanticConventions } from '@arizeai/openinference-semantic-conventions';
+import { type Context, context, diag, type Span, SpanKind, SpanStatusCode, type Tracer } from '@opentelemetry/api';
 import { ATTR_HTTP_RESPONSE_STATUS_CODE } from '@opentelemetry/semantic-conventions';
 import { getRequestAttributes, getResponseAttributes } from './attributes.js';
 
@@ -108,7 +109,11 @@ export function traceDecisions({
       const text = await response.clone().text();
       safelyRecord(() => {
         span.setAttributes({ [ATTR_HTTP_RESPONSE_STATUS_CODE]: response.status, ...getResponseAttributes(text) });
-        span.setStatus(response.ok ? { code: SpanStatusCode.OK } : { code: SpanStatusCode.ERROR, message: `HTTP ${response.status}` });
+        span.setStatus(
+          response.ok
+            ? { code: SpanStatusCode.OK }
+            : { code: SpanStatusCode.ERROR, message: `HTTP ${response.status}` },
+        );
         span.end();
       });
     } catch (error) {

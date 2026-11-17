@@ -1,19 +1,17 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import type { Brain, Decision } from '../src/decision';
 import { createGatedBrain } from '../src/gated-brain';
+import type { StateNode } from '../src/scene';
 import { createSystemOneBrain } from '../src/system-one-brain';
 import { ACTION_QUESTION, DONE_QUESTION } from '../src/system-one-questions';
 import { trainingRowsOf } from '../src/training';
-import type { Brain, Decision } from '../src/decision';
-import type { StateNode } from '../src/scene';
-import { click, finished, mount, named, pageSays, set, type Rig } from './fixtures/rig';
+import { click, finished, mount, named, pageSays, type Rig, set } from './fixtures/rig';
 
 let rig: Rig | undefined;
 afterEach(() => {
   rig?.stop();
   rig = undefined;
 });
-
-const valueOf = (scene: Parameters<typeof named>[0], name: string) => (named(scene, name) as StateNode | undefined)?.value;
 
 describe('the whole loop, closed through the page', () => {
   it('signs in: fills fields, waits for a disabled submit to enable, clicks it, and stops', async () => {
@@ -61,7 +59,9 @@ describe('the whole loop, closed through the page', () => {
     });
 
     await rig.waitFor(() => rig!.turns.some((t) => t.done), 'the live button to be reached');
-    const clicked = rig.turns.flatMap((t) => t.actions.map((a) => rig!.scene().nodes[a.nodeId.replace('f0.', '')]?.name));
+    const clicked = rig.turns.flatMap((t) =>
+      t.actions.map((a) => rig!.scene().nodes[a.nodeId.replace('f0.', '')]?.name),
+    );
     expect(rig.turns[0].afforded.trigger).toHaveLength(2);
     expect(rig.turns[1].afforded.trigger).toHaveLength(1);
     expect(clicked.filter((n) => n === 'Dead end')).toHaveLength(1);
@@ -78,7 +78,9 @@ describe('the whole loop, closed through the page', () => {
   });
 
   it('bounds a page that changes on every action and never converges', async () => {
-    rig = mount('<button id="go">Go</button><p id="n">0</p>', (scene) => click(named(scene, 'Go')!.id), { maxTicks: 4 });
+    rig = mount('<button id="go">Go</button><p id="n">0</p>', (scene) => click(named(scene, 'Go')!.id), {
+      maxTicks: 4,
+    });
     let count = 0;
     document.getElementById('go')!.addEventListener('click', () => {
       document.getElementById('n')!.textContent = String(++count);
@@ -112,10 +114,14 @@ describe('the whole loop, closed through the page', () => {
         return finished;
       },
     );
-    document.getElementById('ok')!.addEventListener('click', () => document.getElementById('d')!.removeAttribute('open'));
+    document
+      .getElementById('ok')!
+      .addEventListener('click', () => document.getElementById('d')!.removeAttribute('open'));
     await rig.waitFor(() => rig!.turns.length >= 2, 'a second decision after the modal closed');
     expect(rig.turns[0].afforded.trigger.map((id) => rig!.scene().nodes[id.replace('f0.', '')]?.name)).toEqual(['OK']);
-    expect(rig.turns[1].afforded.trigger.map((id) => rig!.scene().nodes[id.replace('f0.', '')]?.name)).toEqual(['Behind']);
+    expect(rig.turns[1].afforded.trigger.map((id) => rig!.scene().nodes[id.replace('f0.', '')]?.name)).toEqual([
+      'Behind',
+    ]);
   });
 });
 
@@ -164,20 +170,22 @@ describe('System One through the loop', () => {
     document.getElementById('f')!.addEventListener('submit', submitted);
     return submitted;
   };
-  const slowStub = (calls: string[]): Brain => async (input) => {
-    calls.push('slow');
-    const selects = Object.values(input.scene.nodes).filter((n) => n.category === 'state');
-    const decision: Decision = {
-      decided: true,
-      satisfied: '',
-      remaining: '',
-      actions: [
-        ...selects.map((n) => ({ kind: 'setState' as const, nodeId: n.id, value: 'y' })),
-        { kind: 'clickTrigger' as const, nodeId: named(input.scene, 'Submit')!.id },
-      ],
+  const slowStub =
+    (calls: string[]): Brain =>
+    async (input) => {
+      calls.push('slow');
+      const selects = Object.values(input.scene.nodes).filter((n) => n.category === 'state');
+      const decision: Decision = {
+        decided: true,
+        satisfied: '',
+        remaining: '',
+        actions: [
+          ...selects.map((n) => ({ kind: 'setState' as const, nodeId: n.id, value: 'y' })),
+          { kind: 'clickTrigger' as const, nodeId: named(input.scene, 'Submit')!.id },
+        ],
+      };
+      return decision;
     };
-    return decision;
-  };
 
   it('settles a whole form in one acting tick, then stops on the page saying so', async () => {
     const fetchImpl = server();
@@ -213,7 +221,11 @@ describe('System One through the loop', () => {
   it('hands the whole Scene to the slow brain when one member is unsure, submitting nothing from the fast path', async () => {
     const calls: string[] = [];
     const gated = createGatedBrain({
-      fast: createSystemOneBrain({ baseURL: 'http://jev.test', model: 'test', fetchImpl: server({ memberConfidence: 0.2 }) }),
+      fast: createSystemOneBrain({
+        baseURL: 'http://jev.test',
+        model: 'test',
+        fetchImpl: server({ memberConfidence: 0.2 }),
+      }),
       slow: slowStub(calls),
       threshold: 0.6,
     });

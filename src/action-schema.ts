@@ -72,7 +72,8 @@ export const isActionNode = (n: SceneNode): n is ActionNode => n.category === 'a
  * Links whose handler is an `onclick` (with `href="#"`) are unaffected.
  */
 export function isReachable(node: SceneNode): boolean {
-  if (node.perception.disabled || node.perception.stalled || node.perception.inertByModal || !node.perception.visible) return false;
+  if (node.perception.disabled || node.perception.stalled || node.perception.inertByModal || !node.perception.visible)
+    return false;
   return !(isActionNode(node) && node.href !== undefined && isScriptHref(node.href));
 }
 
@@ -181,8 +182,7 @@ export function buildActionSchema(scene: Scene): ActionSchema | null {
   if (members.length === 0) return null;
 
   // z.union needs two members; a single-member union is just that member.
-  const action =
-    members.length === 1 ? members[0] : z.union(members as [z.ZodType, z.ZodType, ...z.ZodType[]]);
+  const action = members.length === 1 ? members[0] : z.union(members as [z.ZodType, z.ZodType, ...z.ZodType[]]);
 
   return {
     schema: z.union([

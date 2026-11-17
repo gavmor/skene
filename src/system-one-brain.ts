@@ -15,25 +15,26 @@
 // is the commit, so it is never submitted bare), and the batch's confidence is the
 // minimum over the move and every member, so one unsure member sends the whole
 // Scene to the slow brain instead of committing a guess.
-import { nothingAfforded, type BrainInput } from './decision.js';
-import type { ScoredDecision } from './gated-brain.js';
+
 import type { PlanAction } from './action-schema.js';
-import {
-  ACTION_QUESTION,
-  DONE_QUESTION,
-  buildActionQuestions,
-  describeState,
-  type Playbook,
-} from './system-one-questions.js';
+import { type BrainInput, nothingAfforded } from './decision.js';
+import type { ScoredDecision } from './gated-brain.js';
 import {
   askSystemOne,
+  type FetchLike,
   isChoiceAnswer,
   isNoulAnswer,
   MAX_CHOICE_CRITERIA,
-  type FetchLike,
   type SystemOneRequest,
   type SystemOneResponse,
 } from './system-one.js';
+import {
+  ACTION_QUESTION,
+  buildActionQuestions,
+  DONE_QUESTION,
+  describeState,
+  type Playbook,
+} from './system-one-questions.js';
 
 export const SYSTEM_ONE_BRAIN = 'system-one';
 
@@ -129,7 +130,16 @@ export function createSystemOneBrain(options: SystemOneBrainOptions): SystemOneB
 
     const done = response.answers[DONE_QUESTION];
     if (isNoulAnswer(done) && done.noul >= doneThreshold) {
-      return { decided: true, done: true, via: SYSTEM_ONE_BRAIN, confidence: done.noul, satisfied: '', remaining: '', actions: [], evidence };
+      return {
+        decided: true,
+        done: true,
+        via: SYSTEM_ONE_BRAIN,
+        confidence: done.noul,
+        satisfied: '',
+        remaining: '',
+        actions: [],
+        evidence,
+      };
     }
 
     const chosen = response.answers[ACTION_QUESTION];

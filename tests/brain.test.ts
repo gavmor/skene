@@ -1,11 +1,11 @@
-import { describe, expect, it } from 'vitest';
 import { MockLanguageModelV4 } from 'ai/test';
+import { describe, expect, it } from 'vitest';
+import { buildActionSchema } from '../src/action-schema';
 import { decide } from '../src/brain';
 import { describeScene } from '../src/describe-scene';
-import { buildActionSchema } from '../src/action-schema';
+import type { ActionNode, ContentNode, Perception, Scene, SceneNode, StructureNode } from '../src/scene';
 import { SceneProjector } from '../src/scene-projector';
 import { TabScene } from '../src/tab-scene';
-import type { ActionNode, ContentNode, Perception, Scene, SceneNode, StructureNode } from '../src/scene';
 
 const perception: Perception = {
   visible: true,
@@ -83,7 +83,10 @@ describe('describeScene', () => {
   });
 
   it('spends the text budget on what is on screen first, and still reads in page order', () => {
-    const offscreen = (id: string): ContentNode => ({ ...paragraph(id, 'c'.repeat(1500)), perception: { ...perception, inViewport: false } });
+    const offscreen = (id: string): ContentNode => ({
+      ...paragraph(id, 'c'.repeat(1500)),
+      perception: { ...perception, inViewport: false },
+    });
     const story = 'You wake in a tunnel.';
     // Page order puts a store page's comments first; the game's passage is on screen.
     const text = describeScene(sceneOf(...['p1', 'p2', 'p3', 'p4', 'p5'].map(offscreen), paragraph('p6', story)));
@@ -114,7 +117,9 @@ describe('describeScene', () => {
   });
 
   it('nests controls inside their container, with ids only where the schema can act', () => {
-    const lines = outlineOf('<form aria-label="Sign in"><label>Email <input type="text"></label><button disabled>Go</button></form>').split('\n');
+    const lines = outlineOf(
+      '<form aria-label="Sign in"><label>Email <input type="text"></label><button disabled>Go</button></form>',
+    ).split('\n');
     const form = lines.findIndex((line) => line.includes('(form) "Sign in"'));
     expect(lines[form + 1]).toMatch(/\[n\d+\] \(textbox\) "Email" = ""/);
     expect(indent(lines[form + 1])).toBeGreaterThan(indent(lines[form]));
@@ -124,7 +129,9 @@ describe('describeScene', () => {
   });
 
   it('leaves out what the page hides', () => {
-    const text = outlineOf('<nav aria-label="Menu" style="display:none"><a href="/secret">Secret</a></nav><a href="/shown">Shown</a>');
+    const text = outlineOf(
+      '<nav aria-label="Menu" style="display:none"><a href="/secret">Secret</a></nav><a href="/shown">Shown</a>',
+    );
     expect(text).not.toContain('Secret');
     expect(text).toMatch(/\(link\) "Shown"/);
   });
@@ -140,7 +147,8 @@ describe('describeScene', () => {
   });
 
   it('neither lists nor lets the model name a control its container hides', () => {
-    document.body.innerHTML = '<div id="section16" style="display:none"><button>Confirm</button></div><button>Continue</button>';
+    document.body.innerHTML =
+      '<div id="section16" style="display:none"><button>Confirm</button></div><button>Continue</button>';
     const snapshot = new SceneProjector({ root: document, emit: () => {}, schedule: () => {} }).scan();
     if (snapshot.kind !== 'snapshot') throw new Error('expected a snapshot');
     const text = describeScene(snapshot.scene);
@@ -163,15 +171,30 @@ describe('describeScene', () => {
   });
 
   it('reads an embedded frame where its iframe sits in the page', () => {
-    const host: StructureNode = { id: 'n2', role: 'iframe', category: 'structure', frameSrc: 'https://game.test/', relations: {}, perception, order: 1 };
+    const host: StructureNode = {
+      id: 'n2',
+      role: 'iframe',
+      category: 'structure',
+      frameSrc: 'https://game.test/',
+      relations: {},
+      perception,
+      order: 1,
+    };
     const tab = new TabScene();
     tab.ingest(0, {
       kind: 'snapshot',
-      scene: sceneOf({ ...paragraph('n1', 'A Tale of Crowns'), order: 0 }, host, { ...paragraph('n3', 'Comments'), order: 2 }),
+      scene: sceneOf({ ...paragraph('n1', 'A Tale of Crowns'), order: 0 }, host, {
+        ...paragraph('n3', 'Comments'),
+        order: 2,
+      }),
     });
     tab.ingest(4, {
       kind: 'snapshot',
-      scene: { ...sceneOf(paragraph('n1', 'You wake.'), { ...choice('n2', 'Call out'), order: 1 }), url: 'https://game.test/', documentId: 'game' },
+      scene: {
+        ...sceneOf(paragraph('n1', 'You wake.'), { ...choice('n2', 'Call out'), order: 1 }),
+        url: 'https://game.test/',
+        documentId: 'game',
+      },
     });
 
     const lines = describeScene(tab.current!).split('\n');
@@ -194,12 +217,20 @@ describe('decide', () => {
       goal: 'survive',
       model: answering({ satisfied: '', remaining: 'survive', actions: [{ kind: 'clickTrigger', nodeId: 'c2' }] }),
     });
-    expect(decision).toMatchObject({ decided: true, remaining: 'survive', actions: [{ kind: 'clickTrigger', nodeId: 'c2' }] });
+    expect(decision).toMatchObject({
+      decided: true,
+      remaining: 'survive',
+      actions: [{ kind: 'clickTrigger', nodeId: 'c2' }],
+    });
     expect(decision.done).toBeUndefined();
   });
 
   it('turns a done answer into done, with no actions', async () => {
-    const decision = await decide({ scene, goal: 'survive', model: answering({ satisfied: 'reached the ending', done: true }) });
+    const decision = await decide({
+      scene,
+      goal: 'survive',
+      model: answering({ satisfied: 'reached the ending', done: true }),
+    });
     expect(decision).toMatchObject({ decided: true, done: true, satisfied: 'reached the ending', actions: [] });
   });
 

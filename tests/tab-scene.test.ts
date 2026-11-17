@@ -1,13 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { MIN_FRAME_SIDE, TabScene, splitNodeId } from '../src/tab-scene';
 import type { ActionNode, Scene, SceneNode, StateNode, StructureNode } from '../src/scene';
+import { MIN_FRAME_SIDE, splitNodeId, TabScene } from '../src/tab-scene';
 import { actionNode, perception, stateNode } from './fixtures/scene';
 
-const frameScene = (
-  documentId: string,
-  nodes: SceneNode[],
-  over: Partial<Scene> = {},
-): Scene => ({
+const frameScene = (documentId: string, nodes: SceneNode[], over: Partial<Scene> = {}): Scene => ({
   documentId,
   url: `https://${documentId}.test/`,
   title: documentId,
@@ -21,7 +17,14 @@ describe('TabScene', () => {
     const tab = new TabScene();
     tab.ingest(0, {
       kind: 'snapshot',
-      scene: frameScene('top', [stateNode({ id: 'n1', relations: { labelledBy: ['n2'] } }), actionNode({ id: 'n2', submits: { formId: 'n9', method: 'post' } })], { focusedId: 'n1' }),
+      scene: frameScene(
+        'top',
+        [
+          stateNode({ id: 'n1', relations: { labelledBy: ['n2'] } }),
+          actionNode({ id: 'n2', submits: { formId: 'n9', method: 'post' } }),
+        ],
+        { focusedId: 'n1' },
+      ),
     });
     tab.ingest(14, { kind: 'snapshot', scene: frameScene('game', [actionNode({ id: 'n1', name: 'Wait' })]) });
 
@@ -45,7 +48,9 @@ describe('TabScene', () => {
     tab.ingest(3, { kind: 'snapshot', scene: frameScene('pixel', [actionNode({ id: 'n1' })], tiny) });
     tab.ingest(4, {
       kind: 'snapshot',
-      scene: frameScene('strip', [actionNode({ id: 'n1' })], { viewport: { w: 800, h: MIN_FRAME_SIDE - 1, scrollX: 0, scrollY: 0 } }),
+      scene: frameScene('strip', [actionNode({ id: 'n1' })], {
+        viewport: { w: 800, h: MIN_FRAME_SIDE - 1, scrollX: 0, scrollY: 0 },
+      }),
     });
     expect(Object.keys(tab.current!.nodes)).toEqual(['f0.n1']);
     expect(Object.keys(tab.current!.frames)).toEqual(['0']);
@@ -55,7 +60,11 @@ describe('TabScene', () => {
     const tab = new TabScene();
     tab.ingest(0, { kind: 'snapshot', scene: frameScene('top', [stateNode({ id: 'n1' })]) });
     tab.ingest(7, { kind: 'snapshot', scene: frameScene('inner', [stateNode({ id: 'n1' })]) });
-    tab.ingest(7, { kind: 'patch', documentId: 'inner', ops: [{ op: 'replace', path: '/nodes/n1/value', value: 'typed' }] });
+    tab.ingest(7, {
+      kind: 'patch',
+      documentId: 'inner',
+      ops: [{ op: 'replace', path: '/nodes/n1/value', value: 'typed' }],
+    });
 
     expect((tab.current!.nodes['f7.n1'] as StateNode).value).toBe('typed');
     expect((tab.current!.nodes['f0.n1'] as StateNode).value).toBe('');
@@ -89,11 +98,20 @@ describe('TabScene', () => {
 
   it('hangs a child frame under the iframe that embeds it; a frame with no host stays on top', () => {
     const host: StructureNode = {
-      id: 'n5', role: 'iframe', category: 'structure', frameSrc: 'https://game.test/#start', relations: {}, perception: perception(), order: 0,
+      id: 'n5',
+      role: 'iframe',
+      category: 'structure',
+      frameSrc: 'https://game.test/#start',
+      relations: {},
+      perception: perception(),
+      order: 0,
     };
     const tab = new TabScene();
     tab.ingest(0, { kind: 'snapshot', scene: frameScene('top', [host]) });
-    tab.ingest(4, { kind: 'snapshot', scene: frameScene('game', [actionNode({ id: 'n1' }), actionNode({ id: 'n2', parent: 'n1' })]) });
+    tab.ingest(4, {
+      kind: 'snapshot',
+      scene: frameScene('game', [actionNode({ id: 'n1' }), actionNode({ id: 'n2', parent: 'n1' })]),
+    });
     tab.ingest(9, { kind: 'snapshot', scene: frameScene('ad', [actionNode({ id: 'n1' })]) });
 
     const nodes = tab.current!.nodes;

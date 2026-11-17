@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { parseNode, classifyCategory, ParseContext } from '../src/semantic-parser';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { NodeIdMirror } from '../src/node-identity';
+import { classifyCategory, type ParseContext, parseNode } from '../src/semantic-parser';
 
 let ctx: ParseContext;
 beforeEach(() => {
@@ -117,7 +117,8 @@ describe('parseNode', () => {
   });
 
   it('does not repeat text a paragraph, a control or a label already carries', () => {
-    document.body.innerHTML = '<p>Read <span style="display:block">this</span></p><button><div>Go</div></button><label><div>Email</div><input></label>';
+    document.body.innerHTML =
+      '<p>Read <span style="display:block">this</span></p><button><div>Go</div></button><label><div>Email</div><input></label>';
     expect(parseNode(first('p span'), ctx)).toBeNull();
     expect(parseNode(first('button div'), ctx)).toBeNull();
     expect(parseNode(first('label div'), ctx)).toBeNull();

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { AgentLoop } from '../src/agent-loop';
-import { SceneStore } from '../src/scene-store';
 import type { Decision } from '../src/decision';
 import type { Perception, Scene, SceneNode, StateNode } from '../src/scene';
+import { SceneStore } from '../src/scene-store';
 import type { DownMessage, PendingDecision, TurnRecord } from '../src/wire';
 
 const perception: Perception = {
@@ -112,7 +112,14 @@ describe('AgentLoop', () => {
     await vi.advanceTimersByTimeAsync(10);
     expect(decide).toHaveBeenCalledTimes(1);
     expect(sent).toEqual([
-      { kind: 'plan', documentId: 'd1', tick: 1, satisfied: 'nothing yet', remaining: 'fill it', actions: [{ kind: 'setState', nodeId: 'email', value: 'a@b.c' }] },
+      {
+        kind: 'plan',
+        documentId: 'd1',
+        tick: 1,
+        satisfied: 'nothing yet',
+        remaining: 'fill it',
+        actions: [{ kind: 'setState', nodeId: 'email', value: 'a@b.c' }],
+      },
     ]);
     vi.useRealTimers();
   });
@@ -391,7 +398,11 @@ describe('AgentLoop', () => {
     const { loop, decide } = harness([act('email', 'a@b.c'), done], { noEffectMs: 1000 });
     loop.ingest({ kind: 'snapshot', scene: sceneWith('d1', field('email')) });
     await vi.advanceTimersByTimeAsync(20);
-    loop.ingest({ kind: 'patch', documentId: 'd1', ops: [{ op: 'replace', path: '/nodes/email/value', value: 'a@b.c' }] });
+    loop.ingest({
+      kind: 'patch',
+      documentId: 'd1',
+      ops: [{ op: 'replace', path: '/nodes/email/value', value: 'a@b.c' }],
+    });
     await vi.advanceTimersByTimeAsync(5000);
     expect(decide).toHaveBeenCalledTimes(2); // once on the patch, never again on the timer
     vi.useRealTimers();
@@ -402,7 +413,12 @@ describe('AgentLoop', () => {
       const sent: [number, DownMessage][] = [];
       const answer = { next: done };
       const decide = vi.fn(async (_scene: Scene) => answer.next);
-      const loop = new AgentLoop({ decide, send: (frameId, m) => sent.push([frameId, m]), record: () => {}, settleMs: 10 });
+      const loop = new AgentLoop({
+        decide,
+        send: (frameId, m) => sent.push([frameId, m]),
+        record: () => {},
+        settleMs: 10,
+      });
       loop.ingest({ kind: 'snapshot', scene: sceneWith('top-doc', field('search')) }, 0);
       loop.ingest({ kind: 'snapshot', scene: sceneWith('game-doc', field('name')) }, 14);
       return { loop, sent, decide, answer };
@@ -424,8 +440,31 @@ describe('AgentLoop', () => {
       await vi.advanceTimersByTimeAsync(20);
 
       expect(sent).toEqual([
-        [14, { kind: 'plan', documentId: 'game-doc', tick: 1, satisfied: '', remaining: 'x', actions: [{ kind: 'setState', nodeId: 'name', value: 'Ada' }, { kind: 'clickTrigger', nodeId: 'go' }] }],
-        [0, { kind: 'plan', documentId: 'top-doc', tick: 1, satisfied: '', remaining: 'x', actions: [{ kind: 'setState', nodeId: 'search', value: 'crowns' }] }],
+        [
+          14,
+          {
+            kind: 'plan',
+            documentId: 'game-doc',
+            tick: 1,
+            satisfied: '',
+            remaining: 'x',
+            actions: [
+              { kind: 'setState', nodeId: 'name', value: 'Ada' },
+              { kind: 'clickTrigger', nodeId: 'go' },
+            ],
+          },
+        ],
+        [
+          0,
+          {
+            kind: 'plan',
+            documentId: 'top-doc',
+            tick: 1,
+            satisfied: '',
+            remaining: 'x',
+            actions: [{ kind: 'setState', nodeId: 'search', value: 'crowns' }],
+          },
+        ],
       ]);
       vi.useRealTimers();
     });
@@ -457,18 +496,19 @@ describe('AgentLoop', () => {
 });
 
 describe('AgentLoop dead links', () => {
-  const link = (id: string): SceneNode => ({
-    id,
-    role: 'link',
-    name: id,
-    category: 'action',
-    action: 'navigate',
-    href: `/${id}`,
-    relations: {},
-    perception,
-    actuation: { invokeStrategy: 'click' },
-    order: 0,
-  } as SceneNode);
+  const link = (id: string): SceneNode =>
+    ({
+      id,
+      role: 'link',
+      name: id,
+      category: 'action',
+      action: 'navigate',
+      href: `/${id}`,
+      relations: {},
+      perception,
+      actuation: { invokeStrategy: 'click' },
+      order: 0,
+    }) as SceneNode;
   const click = (nodeId: string): Decision => ({
     decided: true,
     satisfied: '',
@@ -477,7 +517,9 @@ describe('AgentLoop dead links', () => {
   });
   const scene = () => sceneWith('d1', link('dead'), link('live'));
   const offers = (decide: ReturnType<typeof vi.fn>, call: number) =>
-    Object.values((decide.mock.calls[call][0] as Scene).nodes).filter((n) => !n.perception.stalled).map((n) => n.id.replace('f0.', ''));
+    Object.values((decide.mock.calls[call][0] as Scene).nodes)
+      .filter((n) => !n.perception.stalled)
+      .map((n) => n.id.replace('f0.', ''));
 
   it('withholds a trigger the content script reported as moving nothing', async () => {
     vi.useFakeTimers();
@@ -500,7 +542,11 @@ describe('AgentLoop dead links', () => {
     await vi.advanceTimersByTimeAsync(1020);
     expect(offers(decide, 1)).toEqual(['live']);
 
-    loop.ingest({ kind: 'patch', documentId: 'd1', ops: [{ op: 'replace', path: '/nodes/live/name', value: 'changed' }] });
+    loop.ingest({
+      kind: 'patch',
+      documentId: 'd1',
+      ops: [{ op: 'replace', path: '/nodes/live/name', value: 'changed' }],
+    });
     await vi.advanceTimersByTimeAsync(20);
     expect(offers(decide, 2)).toEqual(['dead', 'live']);
     vi.useRealTimers();

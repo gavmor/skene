@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import type { SystemOneQuestion } from '../src/system-one';
 import {
   ACTION_QUESTION,
-  DONE_QUESTION,
   buildActionQuestions,
   buildPlaybooks,
+  DONE_QUESTION,
   describeState,
   valueQuestionKey,
 } from '../src/system-one-questions';
@@ -17,11 +18,10 @@ import {
   stateNode,
   structureNode,
 } from './fixtures/scene';
-import type { SystemOneQuestion } from '../src/system-one';
 
 const choiceOf = (questions: Record<string, SystemOneQuestion>, key: string) => {
   const question = questions[key];
-  if (!question || question.type !== 'choice') throw new Error(`expected a choice at ${key}`);
+  if (question?.type !== 'choice') throw new Error(`expected a choice at ${key}`);
   return question;
 };
 
@@ -48,7 +48,12 @@ describe('buildActionQuestions', () => {
     // The state ids are only ever reachable as setState, the trigger id only as
     // clickTrigger — the discriminated union, enforced by the label set.
     expect(targets.filter((t) => t.kind === 'clickTrigger').map((t) => t.nodeId)).toEqual(['n4']);
-    expect(targets.filter((t) => t.kind === 'setState').map((t) => t.nodeId).sort()).toEqual(['n1', 'n2', 'n3']);
+    expect(
+      targets
+        .filter((t) => t.kind === 'setState')
+        .map((t) => t.nodeId)
+        .sort(),
+    ).toEqual(['n1', 'n2', 'n3']);
   });
 
   it('withholds a disabled trigger entirely — it cannot be chosen at any probability', () => {
@@ -66,7 +71,11 @@ describe('buildActionQuestions', () => {
         actionNode({ id: 'n4', name: 'Go' }),
       ),
     )!;
-    expect(Object.values(built.actions).map((t) => t.nodeId).sort()).toEqual(['n1', 'n4']);
+    expect(
+      Object.values(built.actions)
+        .map((t) => t.nodeId)
+        .sort(),
+    ).toEqual(['n1', 'n4']);
   });
 
   it('asks a value question for enumerable controls only, and decodes its labels', () => {
@@ -191,7 +200,12 @@ describe('buildPlaybooks', () => {
   it('ignores an unreachable member rather than counting it', () => {
     const scene = selectFormScene(
       {},
-      stateNode({ id: 't1', name: 'Notes', relations: { container: 'f1' }, perception: perception({ disabled: true }) }),
+      stateNode({
+        id: 't1',
+        name: 'Notes',
+        relations: { container: 'f1' },
+        perception: perception({ disabled: true }),
+      }),
     );
     expect(buildPlaybooks(scene).map((p) => p.members.length)).toEqual([3]);
   });
@@ -240,7 +254,11 @@ describe('buildPlaybooks', () => {
   });
 
   it('falls back to the outline parent when no container is declared', () => {
-    const unscoped = (id: string, name: string) => ({ ...selectNode(id, name, '', ['a', 'b']), relations: {}, parent: 'p1' });
+    const unscoped = (id: string, name: string) => ({
+      ...selectNode(id, name, '', ['a', 'b']),
+      relations: {},
+      parent: 'p1',
+    });
     const scene = sceneOf(
       unscoped('s1', 'First'),
       unscoped('s2', 'Second'),

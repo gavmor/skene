@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import type { PlanAction } from '../src/action-schema';
 import { applyPlan, didMove, summarize } from '../src/reconciler';
 import { SceneProjector } from '../src/scene-projector';
-import type { PlanAction } from '../src/action-schema';
 
 /**
  * These run against a REAL projector over a real (jsdom) DOM, not a mocked
@@ -37,7 +37,10 @@ describe('reconciler', () => {
     const seen: string[] = [];
     for (const type of ['input', 'change']) input.addEventListener(type, () => seen.push(type));
 
-    const results = applyPlan([{ kind: 'setState', nodeId: idOf('input'), value: 'alice@example.com' }], depsFor(projector));
+    const results = applyPlan(
+      [{ kind: 'setState', nodeId: idOf('input'), value: 'alice@example.com' }],
+      depsFor(projector),
+    );
 
     expect(input.value).toBe('alice@example.com');
     expect(seen).toEqual(['input', 'change']);
@@ -50,7 +53,10 @@ describe('reconciler', () => {
     let fired = 0;
     input.addEventListener('input', () => (fired += 1));
 
-    const results = applyPlan([{ kind: 'setState', nodeId: idOf('input'), value: 'alice@example.com' }], depsFor(projector));
+    const results = applyPlan(
+      [{ kind: 'setState', nodeId: idOf('input'), value: 'alice@example.com' }],
+      depsFor(projector),
+    );
 
     expect(results[0].status).toBe('noop');
     expect(fired).toBe(0);
@@ -63,7 +69,9 @@ describe('reconciler', () => {
   });
 
   it('selects an option by value', () => {
-    const { projector, idOf } = mount('<select aria-label="Country"><option value="us">US</option><option value="fr">FR</option></select>');
+    const { projector, idOf } = mount(
+      '<select aria-label="Country"><option value="us">US</option><option value="fr">FR</option></select>',
+    );
     applyPlan([{ kind: 'setState', nodeId: idOf('select'), value: 'fr' }], depsFor(projector));
     expect(document.querySelector<HTMLSelectElement>('select')!.value).toBe('fr');
   });
@@ -129,10 +137,14 @@ describe('reconciler', () => {
       expect(didMove(applyPlan([], depsFor(projector)))).toBe(false);
 
       // emitted, but every action was already satisfied: STALLED, not finished
-      expect(didMove(applyPlan([{ kind: 'setState', nodeId: id, value: 'alice@example.com' }], depsFor(projector)))).toBe(false);
+      expect(
+        didMove(applyPlan([{ kind: 'setState', nodeId: id, value: 'alice@example.com' }], depsFor(projector))),
+      ).toBe(false);
 
       // one real change is enough to count as progress
-      expect(didMove(applyPlan([{ kind: 'setState', nodeId: id, value: 'bob@example.com' }], depsFor(projector)))).toBe(true);
+      expect(didMove(applyPlan([{ kind: 'setState', nodeId: id, value: 'bob@example.com' }], depsFor(projector)))).toBe(
+        true,
+      );
     });
 
     it('treats a stale or rejected action as no movement', () => {

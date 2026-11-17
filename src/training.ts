@@ -20,9 +20,10 @@
 // The row shape is Jeff's `TrainingRow` (jeff apps/hub/app/lib/
 // adapter-requests.server.ts): `state` holds the classifier's input exactly as
 // it was sent, so the adapter trains on what it will see at inference.
-import { ACTION_QUESTION, DONE_QUESTION, valueQuestionKey } from './system-one-questions.js';
-import type { SystemOneEvidence } from './system-one-brain.js';
+
 import { isChoiceAnswer, type SystemOneAnswer, type SystemOneQuestion } from './system-one.js';
+import type { SystemOneEvidence } from './system-one-brain.js';
+import { ACTION_QUESTION, DONE_QUESTION, valueQuestionKey } from './system-one-questions.js';
 import type { TurnOutcome, TurnRecord } from './wire.js';
 
 export interface TrainingRow {
@@ -49,12 +50,18 @@ const isObject = (value: unknown): value is Record<string, unknown> => typeof va
 /** Turn records are read back from storage or JSONL, so evidence is checked, not trusted. */
 export function isSystemOneEvidence(value: unknown): value is SystemOneEvidence {
   if (!isObject(value) || !isObject(value.request) || !isObject(value.response)) return false;
-  return typeof value.request.state === 'string' && isObject(value.request.questions) && isObject(value.response.answers);
+  return (
+    typeof value.request.state === 'string' && isObject(value.request.questions) && isObject(value.response.answers)
+  );
 }
 
 type Row = Omit<TrainingRow, 'id'>;
 
-function choiceRow(state: string, question: SystemOneQuestion | undefined, answer: SystemOneAnswer | undefined): Row | null {
+function choiceRow(
+  state: string,
+  question: SystemOneQuestion | undefined,
+  answer: SystemOneAnswer | undefined,
+): Row | null {
   if (question?.type !== 'choice' || !isChoiceAnswer(answer) || !(answer.choice in question.criteria)) return null;
   return {
     state: { input: state },
@@ -88,9 +95,11 @@ function rowsOf(turn: TurnRecord, evidence: SystemOneEvidence, final: boolean, m
     const key = valueQuestionKey(action.nodeId);
     return [choiceRow(state, questions[key], answers[key])];
   });
-  return [choiceRow(state, questions[ACTION_QUESTION], answers[ACTION_QUESTION]), ...values, doneRow(state, questions[DONE_QUESTION], false)].filter(
-    (r) => r !== null,
-  );
+  return [
+    choiceRow(state, questions[ACTION_QUESTION], answers[ACTION_QUESTION]),
+    ...values,
+    doneRow(state, questions[DONE_QUESTION], false),
+  ].filter((r) => r !== null);
 }
 
 /**

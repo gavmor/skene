@@ -18,7 +18,7 @@
 import { generateObject, type LanguageModel, type Telemetry } from 'ai';
 import { z } from 'zod';
 import { buildActionSchema, isStateNode, type Plan } from './action-schema.js';
-import { nothingAfforded, type Brain, type Decision } from './decision.js';
+import { type Brain, type Decision, nothingAfforded } from './decision.js';
 import { describeScene } from './describe-scene.js';
 import type { ValueFiller } from './gated-brain.js';
 import type { Scene } from './scene.js';

@@ -1,4 +1,4 @@
-import { NodeId } from './scene.js';
+import type { NodeId } from './scene.js';
 
 /**
  * Two-tier stable identity.
@@ -77,10 +77,6 @@ export function structuralPath(el: Element): string {
 }
 
 /** Semantic signature for cross-swap re-keying. */
-export function semanticSignature(
-  role: string,
-  name: string | undefined,
-  path: string,
-): string {
+export function semanticSignature(role: string, name: string | undefined, path: string): string {
   return `${role}|${name ?? ''}|${path}`;
 }

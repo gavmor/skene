@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createGatedBrain } from '../src/gated-brain';
-import { createSystemOneBrain } from '../src/system-one-brain';
-import { ACTION_QUESTION, DONE_QUESTION, valueQuestionKey } from '../src/system-one-questions';
 import type { Brain, Decision } from '../src/decision';
+import { createGatedBrain } from '../src/gated-brain';
 import type { SystemOneAnswer } from '../src/system-one';
 import { MAX_CHOICE_CRITERIA } from '../src/system-one';
+import { createSystemOneBrain } from '../src/system-one-brain';
+import { ACTION_QUESTION, DONE_QUESTION, valueQuestionKey } from '../src/system-one-questions';
 import { actionNode, loginScene, perception, sceneOf, selectFormScene, selectNode, stateNode } from './fixtures/scene';
 
 const choice = (pick: string, confidence: number): SystemOneAnswer => ({
@@ -203,13 +203,19 @@ describe('createGatedBrain', () => {
 
   describe('with a value filler', () => {
     const wants = (confidence: number) =>
-      brainWith({ [ACTION_QUESTION]: choice('fill_email_address', confidence), [DONE_QUESTION]: { type: 'noul', noul: 0.01 } })
-        .brain;
+      brainWith({
+        [ACTION_QUESTION]: choice('fill_email_address', confidence),
+        [DONE_QUESTION]: { type: 'noul', noul: 0.01 },
+      }).brain;
     const gate = (confidence: number, filled: { value: string; via: string } | null) => {
       const slow = slowBrain();
       const fillValue = vi.fn(async () => filled);
       const brain = createGatedBrain({ fast: wants(confidence), slow, threshold: 0.6, fillValue });
-      return { slow, fillValue, decide: () => brain({ scene: loginScene({ submitEnabled: true }), goal: 'sign in as alice@example.com' }) };
+      return {
+        slow,
+        fillValue,
+        decide: () => brain({ scene: loginScene({ submitEnabled: true }), goal: 'sign in as alice@example.com' }),
+      };
     };
 
     it('writes only the missing string for a target System-One is sure of', async () => {

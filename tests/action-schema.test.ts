@@ -83,8 +83,16 @@ describe('buildActionSchema', () => {
     const built = buildActionSchema(sceneOf(stateNode({ id: 'email' })));
     expect(built).not.toBeNull();
     const action = built!.schema;
-    expect(action.safeParse({ satisfied: '', remaining: 'x', actions: [{ kind: 'setState', nodeId: 'email', value: 'a@b.c' }] }).success).toBe(true);
-    expect(action.safeParse({ satisfied: '', remaining: 'x', actions: [{ kind: 'setState', nodeId: 'email' }] }).success).toBe(false);
+    expect(
+      action.safeParse({
+        satisfied: '',
+        remaining: 'x',
+        actions: [{ kind: 'setState', nodeId: 'email', value: 'a@b.c' }],
+      }).success,
+    ).toBe(true);
+    expect(
+      action.safeParse({ satisfied: '', remaining: 'x', actions: [{ kind: 'setState', nodeId: 'email' }] }).success,
+    ).toBe(false);
   });
 
   it('makes clickTrigger-with-a-value unrepresentable', () => {
@@ -101,14 +109,23 @@ describe('buildActionSchema', () => {
     expect(trigger.additionalProperties).toBe(false);
 
     // ...and the two id enums are disjoint, so neither verb reaches the other's nodes.
-    expect(built.schema.safeParse({ satisfied: '', remaining: 'x', actions: [{ kind: 'clickTrigger', nodeId: 'email' }] }).success).toBe(false);
-    expect(built.schema.safeParse({ satisfied: '', remaining: 'x', actions: [{ kind: 'setState', nodeId: 'submit', value: 'x' }] }).success).toBe(false);
+    expect(
+      built.schema.safeParse({ satisfied: '', remaining: 'x', actions: [{ kind: 'clickTrigger', nodeId: 'email' }] })
+        .success,
+    ).toBe(false);
+    expect(
+      built.schema.safeParse({
+        satisfied: '',
+        remaining: 'x',
+        actions: [{ kind: 'setState', nodeId: 'submit', value: 'x' }],
+      }).success,
+    ).toBe(false);
   });
 
   it('does not offer javascript: links, which the content script cannot follow', () => {
     const built = buildActionSchema(
       sceneOf(
-        actionNode({ id: 'save', href: 'javascript: PostBack(\'Save\');' }),
+        actionNode({ id: 'save', href: "javascript: PostBack('Save');" }),
         actionNode({ id: 'back', href: ' JavaScript:history.go(-1)' }),
         actionNode({ id: 'choice', href: '#' }),
       ),
@@ -128,7 +145,10 @@ describe('buildActionSchema', () => {
     )!;
     expect(built.stateIds).toEqual(['live']);
     expect(built.triggerIds).toEqual(['go']);
-    expect(built.schema.safeParse({ satisfied: '', remaining: '', actions: [{ kind: 'clickTrigger', nodeId: 'greyed' }] }).success).toBe(false);
+    expect(
+      built.schema.safeParse({ satisfied: '', remaining: '', actions: [{ kind: 'clickTrigger', nodeId: 'greyed' }] })
+        .success,
+    ).toBe(false);
   });
 
   it('drops read-only state nodes', () => {
@@ -144,7 +164,10 @@ describe('buildActionSchema', () => {
           id: 'country',
           control: 'option',
           value: 'us',
-          options: [{ value: 'us', label: 'US' }, { value: 'fr', label: 'FR' }],
+          options: [
+            { value: 'us', label: 'US' },
+            { value: 'fr', label: 'FR' },
+          ],
         }),
         stateNode({ id: 'volume', control: 'range', value: 3, min: 0, max: 10 }),
       ),
