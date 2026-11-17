@@ -15,16 +15,16 @@
 // is the commit, so it is never submitted bare), and the batch's confidence is the
 // minimum over the move and every member, so one unsure member sends the whole
 // Scene to the slow brain instead of committing a guess.
-import { nothingAfforded, type BrainInput } from './decision';
-import type { ScoredDecision } from './gated-brain';
-import type { PlanAction } from './action-schema';
+import { nothingAfforded, type BrainInput } from './decision.js';
+import type { ScoredDecision } from './gated-brain.js';
+import type { PlanAction } from './action-schema.js';
 import {
   ACTION_QUESTION,
   DONE_QUESTION,
   buildActionQuestions,
   describeState,
   type Playbook,
-} from './system-one-questions';
+} from './system-one-questions.js';
 import {
   askSystemOne,
   isChoiceAnswer,
@@ -33,7 +33,7 @@ import {
   type FetchLike,
   type SystemOneRequest,
   type SystemOneResponse,
-} from './system-one';
+} from './system-one.js';
 
 export const SYSTEM_ONE_BRAIN = 'system-one';
 

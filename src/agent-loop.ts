@@ -14,11 +14,11 @@
 // which produces no patches, which never re-arms the timer; the Scene is then
 // settled, and only a page change, a new goal, or "Decide now" decides on it
 // again. The tick budget exists only to bound a page that churns on its own.
-import { TabScene, splitNodeId, type ComposedScene } from './tab-scene';
-import { buildActionSchema, type PlanAction } from './action-schema';
-import type { Decision } from './decision';
-import type { NodeId, Scene, ScenePatch } from './scene';
-import type { DownMessage, PendingDecision, TurnOutcome, TurnRecord } from './wire';
+import { TabScene, splitNodeId, type ComposedScene } from './tab-scene.js';
+import { buildActionSchema, type PlanAction } from './action-schema.js';
+import type { Decision } from './decision.js';
+import type { NodeId, Scene, ScenePatch } from './scene.js';
+import type { DownMessage, PendingDecision, TurnOutcome, TurnRecord } from './wire.js';
 
 export interface AgentLoopDeps {
   decide: (scene: Scene, signal: AbortSignal) => Promise<Decision>;

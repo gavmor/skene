@@ -4,8 +4,9 @@
 // policy reasons over, rebuilt from the same `ScenePatch` stream. Keeping it a
 // plain fold (snapshot, then ops) means the background holds no state the
 // content script cannot reconstruct by reconnecting.
-import { applyPatch } from 'fast-json-patch';
-import type { Scene, ScenePatch } from './scene';
+// fast-json-patch is CommonJS: a default import works in Node and in bundlers alike.
+import jsonPatch from 'fast-json-patch';
+import type { Scene, ScenePatch } from './scene.js';
 
 export class SceneStore {
   private scene: Scene | null = null;
@@ -28,7 +29,7 @@ export class SceneStore {
       return this.scene;
     }
     if (!this.scene || this.scene.documentId !== message.documentId) return null;
-    this.scene = applyPatch(this.scene, message.ops, false, true).newDocument;
+    this.scene = jsonPatch.applyPatch(this.scene, message.ops, false, true).newDocument;
     return this.scene;
   }
 

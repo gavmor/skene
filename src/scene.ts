@@ -10,7 +10,7 @@
 //   - semantic classification,    : BESPOKE (no prior art) — this module's model
 //     perception probes, actuation
 //   - wire deltas                 : fast-json-patch over `Scene`
-import { Operation } from 'fast-json-patch';
+import type { Operation } from 'fast-json-patch';
 
 /**
  * Stable across frames. Primary source is the rrweb Mirror id of the element that

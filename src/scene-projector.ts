@@ -1,7 +1,8 @@
-import { compare, Operation } from 'fast-json-patch';
-import { Perception, Scene, SceneNode, ScenePatch } from './scene';
-import { NodeIdMirror } from './node-identity';
-import { isVisible, parseNode, ParseContext } from './semantic-parser';
+// fast-json-patch is CommonJS: a default import works in Node and in bundlers alike.
+import jsonPatch, { type Operation } from 'fast-json-patch';
+import { Perception, Scene, SceneNode, ScenePatch } from './scene.js';
+import { NodeIdMirror } from './node-identity.js';
+import { isVisible, parseNode, ParseContext } from './semantic-parser.js';
 
 /** The subset of perception that is global (not derivable from the element alone). */
 type GlobalPerception = Partial<Pick<Perception, 'inViewport' | 'occluded' | 'inertByModal'>>;
@@ -162,7 +163,7 @@ export class SceneProjector {
       // Parsing knows nothing of placement: keep it, and let place() change it.
       node.order = prev.order;
       if (prev.parent !== undefined) node.parent = prev.parent;
-      for (const sub of compare(prev, node)) {
+      for (const sub of jsonPatch.compare(prev, node)) {
         ops.push({ ...sub, path: `/nodes/${id}${sub.path}` });
       }
       this.scene.nodes[id] = node;

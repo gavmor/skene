@@ -33,6 +33,7 @@ jobs:
       - run: pnpm test
       - run: pnpm cpd
       - run: pnpm build
+      - run: pnpm check:node
       - run: pnpm pack
       - name: Attach to the release
         run: gh release upload "${GITHUB_REF_NAME}" gavmor-skene-*.tgz --clobber

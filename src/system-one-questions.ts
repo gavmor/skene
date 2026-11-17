@@ -35,11 +35,11 @@
 // more thing the classifier could get wrong, for no information the first
 // does not carry; and since setState is convergent, members that already hold
 // their value are no-ops in the batch.
-import { isActionNode, isReachable, isStateNode } from './action-schema';
-import { describeScene } from './describe-scene';
-import type { ActionNode, NodeId, Scene, SceneNode, StateNode } from './scene';
-import { MAX_CHOICE_CRITERIA } from './system-one';
-import type { SystemOneQuestion } from './system-one';
+import { isActionNode, isReachable, isStateNode } from './action-schema.js';
+import { describeScene } from './describe-scene.js';
+import type { ActionNode, NodeId, Scene, SceneNode, StateNode } from './scene.js';
+import { MAX_CHOICE_CRITERIA } from './system-one.js';
+import type { SystemOneQuestion } from './system-one.js';
 
 /** The question name under which the next (verb, nodeId) is asked. */
 export const ACTION_QUESTION = 'next_action';

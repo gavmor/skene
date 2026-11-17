@@ -10,13 +10,13 @@ import {
   SceneNode,
   StateNode,
   StructureNode,
-} from './scene';
+} from './scene.js';
 import {
   NodeIdMirror,
   semanticSignature,
   structuralPath,
-} from './node-identity';
-import { deriveActuation } from './actuation';
+} from './node-identity.js';
+import { deriveActuation } from './actuation.js';
 
 export interface ParseContext {
   mirror: NodeIdMirror;

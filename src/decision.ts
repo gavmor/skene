@@ -1,8 +1,8 @@
 // The decision seam: what a brain is handed and what it must answer. No model,
 // transport or browser in here, so every brain (AI SDK, System One, and any
 // later one) depends on this and nothing else of each other.
-import type { PlanAction } from './action-schema';
-import type { Scene } from './scene';
+import type { PlanAction } from './action-schema.js';
+import type { Scene } from './scene.js';
 
 /**
  * The loop's view of one decision. `actions` is empty only in named cases:

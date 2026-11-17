@@ -4,7 +4,7 @@
 // left to say per protocol is which endpoint it is and whose ecosystem it is.
 // Part of the Apache-2.0 fork in this directory; see LICENSE and NOTICE here.
 import { DecisionProvider, DecisionSystem } from '@arizeai/openinference-semantic-conventions';
-import type { DecisionProtocol } from './trace';
+import type { DecisionProtocol } from './trace.js';
 
 /**
  * `POST <baseURL>/v1/systemone`, the Jev System One protocol, against any
