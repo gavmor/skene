@@ -1,6 +1,6 @@
 {
   "name": "@gavmor/skene",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A web page as a semantic Scene: projection, actuation, and the perceive-decide-act loop that drives it toward a goal.",
   "license": "ISC",
   "type": "module",

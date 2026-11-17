@@ -1,0 +1,40 @@
+# Publishing a GitHub Release tagged vX.Y.Z builds the package and attaches
+# gavmor-skene-X.Y.Z.tgz to it. Consumers depend on that asset's URL, so
+# nothing has to build on install:
+#   https://github.com/gavmor/skene/releases/download/vX.Y.Z/gavmor-skene-X.Y.Z.tgz
+# The tag must equal package.json's version, so bump it (and merge) first.
+name: Release
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write # attach the asset to the release
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Tag matches package.json
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "${GITHUB_REF_NAME}" != "v${version}" ]; then
+            echo "release tag ${GITHUB_REF_NAME} does not match package.json version ${version}" >&2
+            exit 1
+          fi
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm cpd
+      - run: pnpm build
+      - run: pnpm pack
+      - name: Attach to the release
+        run: gh release upload "${GITHUB_REF_NAME}" gavmor-skene-*.tgz --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

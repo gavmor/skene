@@ -19,19 +19,21 @@ you import need.
 
 ## Use
 
+Each GitHub Release carries a built tarball; depend on it by URL, so nothing
+builds on install:
+
 ```bash
-pnpm add github:gavmor/skene#v0.1.0   # builds dist/ on install (`prepare`)
+pnpm add https://github.com/gavmor/skene/releases/download/v0.1.1/gavmor-skene-0.1.1.tgz
 ```
 
-pnpm runs a dependency's build only when allowed; in the consumer's
-`pnpm-workspace.yaml`:
+For local development against a checkout: `pnpm link ../skene` (after `pnpm build`).
 
-```yaml
-allowBuilds:
-  '@gavmor/skene': true
-```
+## Release
 
-For local development against a checkout: `pnpm link ../skene`.
+Bump `version` in `package.json`, merge, then publish a GitHub Release tagged
+`v<version>` (`gh release create v0.1.1 --generate-notes`). The Release workflow
+checks the tag against `package.json`, runs the gates, builds, and attaches
+`gavmor-skene-<version>.tgz`.
 
 ## Develop
 
