@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createGatedBrain } from '../utils/gated-brain';
-import { createSystemOneBrain } from '../utils/system-one-brain';
-import { ACTION_QUESTION, DONE_QUESTION, valueQuestionKey } from '../utils/system-one-questions';
-import type { Brain, Decision } from '../utils/decision';
-import type { SystemOneAnswer } from '../utils/system-one';
-import { MAX_CHOICE_CRITERIA } from '../utils/system-one';
+import { createGatedBrain } from '../src/gated-brain';
+import { createSystemOneBrain } from '../src/system-one-brain';
+import { ACTION_QUESTION, DONE_QUESTION, valueQuestionKey } from '../src/system-one-questions';
+import type { Brain, Decision } from '../src/decision';
+import type { SystemOneAnswer } from '../src/system-one';
+import { MAX_CHOICE_CRITERIA } from '../src/system-one';
 import { actionNode, loginScene, perception, sceneOf, selectFormScene, selectNode, stateNode } from './fixtures/scene';
 
 const choice = (pick: string, confidence: number): SystemOneAnswer => ({

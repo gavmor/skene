@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { buildActionSchema } from '../utils/action-schema';
-import type { ActionNode, Perception, Scene, StateNode } from '../utils/scene';
+import { buildActionSchema } from '../src/action-schema';
+import type { ActionNode, Perception, Scene, StateNode } from '../src/scene';
 
 const perception = (over: Partial<Perception> = {}): Perception => ({
   visible: true,

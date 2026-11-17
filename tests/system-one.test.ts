@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { askSystemOne, isChoiceAnswer, isNoulAnswer } from '../utils/system-one';
+import { askSystemOne, isChoiceAnswer, isNoulAnswer } from '../src/system-one';
 import { OBSERVED, REQUEST } from './fixtures/jev-cpp';
 
 const ok = (body: unknown) =>

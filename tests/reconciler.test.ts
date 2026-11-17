@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { applyPlan, didMove, summarize } from '../utils/reconciler';
-import { SceneProjector } from '../utils/scene-projector';
-import type { PlanAction } from '../utils/action-schema';
+import { applyPlan, didMove, summarize } from '../src/reconciler';
+import { SceneProjector } from '../src/scene-projector';
+import type { PlanAction } from '../src/action-schema';
 
 /**
  * These run against a REAL projector over a real (jsdom) DOM, not a mocked

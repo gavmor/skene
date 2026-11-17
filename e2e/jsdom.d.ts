@@ -1,5 +1,5 @@
 // Minimal ambient types for jsdom, following the same pattern as
-// utils/aria-query.d.ts. The probe needs one constructor and one property, so a
+// src/aria-query.d.ts. The probe needs one constructor and one property, so a
 // four-line surface beats pulling in @types/jsdom for a file that is not part of
 // any gate.
 declare module 'jsdom' {

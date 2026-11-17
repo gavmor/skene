@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { AgentLoop } from '../utils/agent-loop';
-import { SceneStore } from '../utils/scene-store';
-import type { Decision } from '../utils/decision';
-import type { Perception, Scene, SceneNode, StateNode } from '../utils/scene';
-import type { DownMessage, PendingDecision, TurnRecord } from '../utils/wire';
+import { AgentLoop } from '../src/agent-loop';
+import { SceneStore } from '../src/scene-store';
+import type { Decision } from '../src/decision';
+import type { Perception, Scene, SceneNode, StateNode } from '../src/scene';
+import type { DownMessage, PendingDecision, TurnRecord } from '../src/wire';
 
 const perception: Perception = {
   visible: true,

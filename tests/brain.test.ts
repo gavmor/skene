@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { MockLanguageModelV4 } from 'ai/test';
-import { decide } from '../utils/brain';
-import { describeScene } from '../utils/describe-scene';
-import { buildActionSchema } from '../utils/action-schema';
-import { SceneProjector } from '../utils/scene-projector';
-import { TabScene } from '../utils/tab-scene';
-import type { ActionNode, ContentNode, Perception, Scene, SceneNode, StructureNode } from '../utils/scene';
+import { decide } from '../src/brain';
+import { describeScene } from '../src/describe-scene';
+import { buildActionSchema } from '../src/action-schema';
+import { SceneProjector } from '../src/scene-projector';
+import { TabScene } from '../src/tab-scene';
+import type { ActionNode, ContentNode, Perception, Scene, SceneNode, StructureNode } from '../src/scene';
 
 const perception: Perception = {
   visible: true,

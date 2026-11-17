@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { SceneProjector, ProjectorDeps } from '../utils/scene-projector';
-import { ScenePatch } from '../utils/scene';
+import { SceneProjector, ProjectorDeps } from '../src/scene-projector';
+import { ScenePatch } from '../src/scene';
 
 function makeProjector(): { proj: SceneProjector; patches: ScenePatch[] } {
   const patches: ScenePatch[] = [];

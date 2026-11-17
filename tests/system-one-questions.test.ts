@@ -6,7 +6,7 @@ import {
   buildPlaybooks,
   describeState,
   valueQuestionKey,
-} from '../utils/system-one-questions';
+} from '../src/system-one-questions';
 import {
   actionNode,
   loginScene,
@@ -17,7 +17,7 @@ import {
   stateNode,
   structureNode,
 } from './fixtures/scene';
-import type { SystemOneQuestion } from '../utils/system-one';
+import type { SystemOneQuestion } from '../src/system-one';
 
 const choiceOf = (questions: Record<string, SystemOneQuestion>, key: string) => {
   const question = questions[key];

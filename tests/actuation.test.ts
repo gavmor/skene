@@ -4,7 +4,7 @@ import {
   setNativeValue,
   dispatchSequence,
   POINTER_SEQUENCE,
-} from '../utils/actuation';
+} from '../src/actuation';
 
 beforeEach(() => {
   document.body.innerHTML = '';

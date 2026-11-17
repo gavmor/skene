@@ -4,12 +4,12 @@
 //
 // The brain a test supplies is a function of the Scene alone, as a real one is;
 // whatever it "remembers" must be read back off the page.
-import { AgentLoop, type AgentLoopDeps } from '../../utils/agent-loop';
-import { handlePlan } from '../../utils/plan-handler';
-import { SceneProjector } from '../../utils/scene-projector';
-import type { Decision } from '../../utils/decision';
-import type { Scene, SceneNode } from '../../utils/scene';
-import type { TurnRecord } from '../../utils/wire';
+import { AgentLoop, type AgentLoopDeps } from '../../src/agent-loop';
+import { handlePlan } from '../../src/plan-handler';
+import { SceneProjector } from '../../src/scene-projector';
+import type { Decision } from '../../src/decision';
+import type { Scene, SceneNode } from '../../src/scene';
+import type { TurnRecord } from '../../src/wire';
 
 export type Mind = (scene: Scene) => Decision | Promise<Decision>;
 

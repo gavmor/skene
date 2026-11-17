@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { SceneProjector } from '../utils/scene-projector';
-import { applyPlan } from '../utils/reconciler';
-import { createSystemOneBrain } from '../utils/system-one-brain';
-import { ACTION_QUESTION, DONE_QUESTION, buildActionQuestions } from '../utils/system-one-questions';
-import type { ScenePatch, StateNode } from '../utils/scene';
+import { SceneProjector } from '../src/scene-projector';
+import { applyPlan } from '../src/reconciler';
+import { createSystemOneBrain } from '../src/system-one-brain';
+import { ACTION_QUESTION, DONE_QUESTION, buildActionQuestions } from '../src/system-one-questions';
+import type { ScenePatch, StateNode } from '../src/scene';
 
 /**
  * The one closed-loop invariant the whole design rests on: after the down-edge

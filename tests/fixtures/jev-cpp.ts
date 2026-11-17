@@ -1,4 +1,4 @@
-import type { SystemOneRequest } from '../../utils/system-one';
+import type { SystemOneRequest } from '../../src/system-one';
 
 /**
  * Verbatim body from a REAL `POST /v1/systemone` against jev.cpp serving

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { parseNode, classifyCategory, ParseContext } from '../utils/semantic-parser';
-import { NodeIdMirror } from '../utils/node-identity';
+import { parseNode, classifyCategory, ParseContext } from '../src/semantic-parser';
+import { NodeIdMirror } from '../src/node-identity';
 
 let ctx: ParseContext;
 beforeEach(() => {

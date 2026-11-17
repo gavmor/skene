@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { MIN_FRAME_SIDE, TabScene, splitNodeId } from '../utils/tab-scene';
-import type { ActionNode, Scene, SceneNode, StateNode, StructureNode } from '../utils/scene';
+import { MIN_FRAME_SIDE, TabScene, splitNodeId } from '../src/tab-scene';
+import type { ActionNode, Scene, SceneNode, StateNode, StructureNode } from '../src/scene';
 import { actionNode, perception, stateNode } from './fixtures/scene';
 
 const frameScene = (

@@ -1,0 +1,92 @@
+{
+  "name": "@gavmor/skene",
+  "version": "0.1.0",
+  "description": "A web page as a semantic Scene: projection, actuation, and the perceive-decide-act loop that drives it toward a goal.",
+  "license": "ISC",
+  "type": "module",
+  "sideEffects": false,
+  "packageManager": "pnpm@12.11.2",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gavmor/skene.git"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "default": "./dist/core.js"
+    },
+    "./dom": {
+      "types": "./dist/dom.d.ts",
+      "default": "./dist/dom.js"
+    },
+    "./brains/ai-sdk": {
+      "types": "./dist/brains/ai-sdk.d.ts",
+      "default": "./dist/brains/ai-sdk.js"
+    },
+    "./brains/system-one": {
+      "types": "./dist/brains/system-one.d.ts",
+      "default": "./dist/brains/system-one.js"
+    },
+    "./tracing": {
+      "types": "./dist/tracing.d.ts",
+      "default": "./dist/tracing.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepare": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "probe": "vitest run --config e2e/vitest.probe.config.ts",
+    "typecheck": "tsc --noEmit",
+    "cpd": "jscpd --min-lines 10 --min-tokens 50 --pattern 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "aria-query": "^5.3.2",
+    "dom-accessibility-api": "^0.7.1",
+    "fast-json-patch": "^3.1.1",
+    "zod": "^4.6.5"
+  },
+  "peerDependencies": {
+    "@arizeai/openinference-core": "^2.8.0",
+    "@arizeai/openinference-semantic-conventions": "^2.14.0",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/semantic-conventions": "^1.43.0",
+    "ai": "^7.0.137"
+  },
+  "peerDependenciesMeta": {
+    "@arizeai/openinference-core": {
+      "optional": true
+    },
+    "@arizeai/openinference-semantic-conventions": {
+      "optional": true
+    },
+    "@opentelemetry/api": {
+      "optional": true
+    },
+    "@opentelemetry/semantic-conventions": {
+      "optional": true
+    },
+    "ai": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@arizeai/openinference-core": "^2.8.0",
+    "@arizeai/openinference-semantic-conventions": "^2.14.0",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/sdk-trace-base": "^2.12.0",
+    "@opentelemetry/semantic-conventions": "^1.43.0",
+    "@types/node": "^24.0.0",
+    "ai": "^7.0.137",
+    "jscpd": "^4.2.3",
+    "jsdom": "^29.1.1",
+    "lefthook": "^2.1.6",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.6"
+  }
+}

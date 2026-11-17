@@ -1,9 +1,9 @@
 import { ROOT_CONTEXT, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { BasicTracerProvider, InMemorySpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { describe, expect, it, vi } from 'vitest';
-import { JEV_SYSTEM_ONE, OPENAI_DECISIONS } from '../utils/openinference-decision/protocols';
-import { traceDecisions, type DecisionFetch } from '../utils/openinference-decision/trace';
-import { askSystemOne, isChoiceAnswer } from '../utils/system-one';
+import { JEV_SYSTEM_ONE, OPENAI_DECISIONS } from '../src/openinference-decision/protocols';
+import { traceDecisions, type DecisionFetch } from '../src/openinference-decision/trace';
+import { askSystemOne, isChoiceAnswer } from '../src/system-one';
 import { OBSERVED, REQUEST } from './fixtures/jev-cpp';
 
 function recorder() {

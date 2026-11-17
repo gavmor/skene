@@ -2,7 +2,7 @@
 //
 // Hand-built rather than projected, so a test can state exactly the one fact it
 // is about (a disabled trigger, a read-only field) without a DOM in the way.
-import type { ActionNode, Perception, Scene, SceneNode, StateNode, StructureNode } from '../../utils/scene';
+import type { ActionNode, Perception, Scene, SceneNode, StateNode, StructureNode } from '../../src/scene';
 
 export const perception = (over: Partial<Perception> = {}): Perception => ({
   visible: true,

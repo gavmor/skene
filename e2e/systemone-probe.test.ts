@@ -24,11 +24,11 @@ import { request as httpRequest } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SceneProjector } from '../utils/scene-projector';
-import { createSystemOneBrain } from '../utils/system-one-brain';
-import { ACTION_QUESTION, buildActionQuestions, describeState } from '../utils/system-one-questions';
-import { askSystemOne, isChoiceAnswer, isNoulAnswer, type FetchLike } from '../utils/system-one';
-import type { Scene } from '../utils/scene';
+import { SceneProjector } from '../src/scene-projector';
+import { createSystemOneBrain } from '../src/system-one-brain';
+import { ACTION_QUESTION, buildActionQuestions, describeState } from '../src/system-one-questions';
+import { askSystemOne, isChoiceAnswer, isNoulAnswer, type FetchLike } from '../src/system-one';
+import type { Scene } from '../src/scene';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 
