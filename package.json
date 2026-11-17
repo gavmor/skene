@@ -42,7 +42,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "prepare": "tsc -p tsconfig.build.json",
+    "prepare": "lefthook install",
     "test": "vitest run",
     "test:watch": "vitest",
     "probe": "vitest run --config e2e/vitest.probe.config.ts",
