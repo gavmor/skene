@@ -347,7 +347,9 @@ describe('playbooks', () => {
     const { brain } = brainWith({ [ACTION_QUESTION]: choice('choose_first', 0.9), ...memberAnswers() });
 
     for (const scene of [lone, twoCommits, stalled]) {
-      expect(await askForm(brain, scene)).toEqual({
+      const { evidence, ...decision } = await askForm(brain, scene);
+      expect(evidence).toBeDefined();
+      expect(decision).toEqual({
         decided: true,
         via: 'system-one',
         satisfied: '',

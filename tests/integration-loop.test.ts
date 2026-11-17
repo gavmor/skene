@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createGatedBrain } from '../src/gated-brain';
 import { createSystemOneBrain } from '../src/system-one-brain';
 import { ACTION_QUESTION, DONE_QUESTION } from '../src/system-one-questions';
+import { trainingRowsOf } from '../src/training';
 import type { Brain, Decision } from '../src/decision';
 import type { StateNode } from '../src/scene';
 import { click, finished, mount, named, pageSays, set, type Rig } from './fixtures/rig';
@@ -195,6 +196,18 @@ describe('System One through the loop', () => {
     expect([...document.querySelectorAll('select')].map((s) => s.value)).toEqual(['y', 'y', 'y']);
     expect(submitted).toHaveBeenCalledTimes(1);
     expect(fetchImpl).toHaveBeenCalledTimes(2);
+
+    // The assertions above are the verifier: this run may now become training data.
+    const rows = trainingRowsOf({ id: 'form', verified: true, turns: rig.turns, outcomes: rig.outcomes });
+    expect(rows.map((r) => [r.question.type, r.label])).toEqual([
+      ['choice', rows[0].label], // next_action: the commit
+      ['choice', 'y'],
+      ['choice', 'y'],
+      ['choice', 'y'],
+      ['noul', 'no'],
+      ['noul', 'yes'],
+    ]);
+    expect(rows[0].question.criteria[rows[0].label]).toContain('Submit');
   });
 
   it('hands the whole Scene to the slow brain when one member is unsure, submitting nothing from the fast path', async () => {

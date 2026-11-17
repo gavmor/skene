@@ -18,13 +18,15 @@ import { TabScene, splitNodeId, type ComposedScene } from './tab-scene';
 import { buildActionSchema, type PlanAction } from './action-schema';
 import type { Decision } from './decision';
 import type { NodeId, Scene, ScenePatch } from './scene';
-import type { DownMessage, PendingDecision, TurnRecord } from './wire';
+import type { DownMessage, PendingDecision, TurnOutcome, TurnRecord } from './wire';
 
 export interface AgentLoopDeps {
   decide: (scene: Scene, signal: AbortSignal) => Promise<Decision>;
   /** to one frame of the tab, in that frame's own node ids and document */
   send: (frameId: number, message: DownMessage) => void;
   record: (turn: TurnRecord) => void;
+  /** after a plan is sent, whether it changed the page; at most once per plan */
+  outcome?: (outcome: TurnOutcome) => void;
   /** the decision now awaiting the brain, then `undefined` once it has answered or failed */
   pending?: (decision: PendingDecision | undefined) => void;
   /** quiet window that marks a Scene as settled */
@@ -56,7 +58,7 @@ export class AgentLoop {
    * same-document snapshot with no op before it is the content script saying
    * "nothing moved" (see content.ts).
    */
-  private awaiting: { documentId: string; triggers: NodeId[] } | undefined;
+  private awaiting: { tick: number; documentId: string; triggers: NodeId[] } | undefined;
   /**
    * Triggers that were activated on THIS page and changed nothing. Episodic
    * memory scoped to one unchanged Scene: any op or new document forgets it,
@@ -100,14 +102,14 @@ export class AgentLoop {
     }
     if (!this.tab.ingest(frameId, message)) return;
     if (message.kind === 'patch' ? message.ops.length > 0 : !sameDocument) {
-      this.awaiting = undefined;
+      this.answer(true);
       this.stalled.clear();
     } else if (message.kind === 'snapshot' && !message.settled) {
       const awaiting = this.awaiting;
       if (awaiting && awaiting.documentId === this.tab.current?.documentId) {
         // The plan came back unanswered: this frame's share of it did nothing.
         this.markStalled(awaiting.triggers.filter((id) => splitNodeId(id)?.frameId === frameId));
-        this.awaiting = undefined;
+        this.answer(false);
       }
     }
     this.changed();
@@ -129,6 +131,14 @@ export class AgentLoop {
     this.disarm();
     clearTimeout(this.noEffect);
     this.inFlight?.abort();
+  }
+
+  /** The page has answered the plan in flight, if there is one. */
+  private answer(moved: boolean): void {
+    const awaiting = this.awaiting;
+    if (!awaiting) return;
+    this.awaiting = undefined;
+    this.deps.outcome?.({ tick: awaiting.tick, documentId: awaiting.documentId, moved });
   }
 
   private markStalled(triggers: NodeId[]): void {
@@ -227,6 +237,7 @@ export class AgentLoop {
       confidence: decision.confidence,
       ms: (this.deps.now ?? Date.now)() - started,
       error,
+      evidence: decision.evidence,
     });
 
     if (decision.actions.length > 0) {
@@ -247,11 +258,12 @@ export class AgentLoop {
       // used to idle the loop for good. Decide again instead, within the budget.
       const sentAt = this.revision;
       const triggers = decision.actions.filter((a) => a.kind === 'clickTrigger').map((a) => a.nodeId);
-      this.awaiting = { documentId: scene.documentId, triggers };
+      // A plan still unanswered (a retarget or "decide now" overtook it) gets no outcome: unknown, not moved.
+      this.awaiting = { tick, documentId: scene.documentId, triggers };
       clearTimeout(this.noEffect);
       this.noEffect = setTimeout(() => {
         if (this.revision !== sentAt) return;
-        this.awaiting = undefined;
+        this.answer(false);
         this.markStalled(triggers);
         this.rearm();
       }, this.deps.noEffectMs ?? 6000);

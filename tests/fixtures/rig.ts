@@ -9,13 +9,14 @@ import { handlePlan } from '../../src/plan-handler';
 import { SceneProjector } from '../../src/scene-projector';
 import type { Decision } from '../../src/decision';
 import type { Scene, SceneNode } from '../../src/scene';
-import type { TurnRecord } from '../../src/wire';
+import type { TurnOutcome, TurnRecord } from '../../src/wire';
 
 export type Mind = (scene: Scene) => Decision | Promise<Decision>;
 
 export interface Rig {
   loop: AgentLoop;
   turns: TurnRecord[];
+  outcomes: TurnOutcome[];
   /** the page's current Scene, as the projector holds it */
   scene: () => Scene;
   /** replace the document: a new projector, so a new documentId, as on SPA navigation */
@@ -31,12 +32,14 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function mount(html: string, mind: Mind, options: Partial<AgentLoopDeps> = {}): Rig {
   const turns: TurnRecord[] = [];
+  const outcomes: TurnOutcome[] = [];
   let projector: SceneProjector;
 
   const loop = new AgentLoop({
     decide: async (scene) => mind(scene),
     send: (_frameId, message) => handlePlan(projector, message, (patch) => loop.ingest(patch, 0)),
     record: (turn) => turns.push(turn),
+    outcome: (outcome) => outcomes.push(outcome),
     settleMs: 5,
     noEffectMs: 60,
     ...options,
@@ -61,6 +64,7 @@ export function mount(html: string, mind: Mind, options: Partial<AgentLoopDeps> 
   return {
     loop,
     turns,
+    outcomes,
     scene: () => projector.current,
     navigate: (next) => {
       document.body.innerHTML = next;
